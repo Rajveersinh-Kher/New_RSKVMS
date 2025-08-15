@@ -25,15 +25,15 @@ MONGODB_URI = os.environ.get('MONGODB_URI')
 MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'rsk_vms')
 
 # Initialize MongoDB connection
-if MONGODB_URI:
-    from mongoengine import connect
-    try:
-        connect(host=MONGODB_URI, db=MONGODB_DB_NAME)
-        print(f"Connected to MongoDB: {MONGODB_DB_NAME}")
-    except Exception as e:
-        print(f"MongoDB connection failed: {e}")
-else:
-    print("MongoDB URI not found in environment variables")
+#if MONGODB_URI:
+#    from mongoengine import connect
+#    try:
+#        connect(host=MONGODB_URI, db=MONGODB_DB_NAME)
+#        print(f"Connected to MongoDB: {MONGODB_DB_NAME}")
+#    except Exception as e:
+#        print(f"MongoDB connection failed: {e}")
+#else:
+#    print("MongoDB URI not found in environment variables")
 
 
 # Quick-start development settings - unsuitable for production
