@@ -42,7 +42,7 @@ else:
 # SECURITY WARNING: keep the secret key used in production secret!
 # For local development, a fallback key is used. Always override via ENV in production.
 # Generate a new secret key: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-SECRET_KEY = os.environ.get('SECRET_KEY') or "dev-insecure-secret-key-change-me"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG can be toggled via environment variable. Defaults to True for local/dev.
@@ -109,16 +109,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'NewRSKVMSdb',
-        'USER': 'postgres',
-        'PASSWORD': 'RA101728vu',
-        'HOST': 'localhost',
-        'PORT': '5432', 
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+
 
 
 
