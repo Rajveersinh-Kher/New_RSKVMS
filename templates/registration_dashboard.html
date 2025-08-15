@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Dashboard</title>
+    <link rel="stylesheet" href="/static/theme.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, {{ user.username }} (Registration User)</h2>
+        <p>This is your registration dashboard. More features coming soon.</p>
+        <a href="{% url 'registration-logout' %}">Logout</a>
+    </div>
+</body>
+</html> 

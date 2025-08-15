@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visitor Check-in/Check-out</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container { 
+            background: #ffffff; 
+            padding: 40px; 
+            border-radius: 20px; 
+            max-width: 500px; 
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+        }
+
+        h2 { 
+            text-align: center; 
+            color: #1a1a1a;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 2px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: #fafafa;
+        }
+
+        .form-section h3 {
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #result { 
+            margin-top: 25px; 
+            text-align: center; 
+            font-weight: 600;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        input[type=text] { 
+            width: 100%; 
+            padding: 18px 20px; 
+            font-size: 1.1em; 
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+            outline: none;
+            font-weight: 500;
+        }
+
+        input[type=text]:focus {
+            border-color: #ffd700;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        input[type=text]:hover {
+            border-color: #ffed4e;
+            background: #ffffff;
+        }
+
+        input[type=text]::placeholder {
+            color: #888;
+            font-weight: 400;
+        }
+
+        button { 
+            width: 100%; 
+            padding: 18px; 
+            font-size: 1.2em; 
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a1a; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:active { 
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .checkin-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .checkin-btn:hover {
+            background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .checkout-btn {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+        }
+
+        .checkout-btn:hover {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.4);
+        }
+
+        .success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: 2px solid #4CAF50;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            border: 2px solid #f44336;
+        }
+
+        .loading {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            border: 2px solid #ffd700;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .container:hover {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+            
+            input[type=text], button {
+                padding: 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Visitor Check-in/Check-out</h2>
+    
+    <!-- Check-in Section -->
+    <div class="form-section">
+        <h3>Check In</h3>
+        <form id="checkinForm">
+            <div class="form-group">
+                <input type="text" id="checkinQrInput" name="qr_data" placeholder="Scan QR code to check in" autofocus autocomplete="off" required />
+            </div>
+            <button type="submit" class="checkin-btn">Check In</button>
+        </form>
+    </div>
+
+    <!-- Check-out Section -->
+    <div class="form-section">
+        <h3>Check Out</h3>
+    <form id="checkoutForm">
+        <div class="form-group">
+                <input type="text" id="checkoutQrInput" name="qr_data" placeholder="Scan QR code to check out" autocomplete="off" required />
+        </div>
+            <button type="submit" class="checkout-btn">Check Out</button>
+    </form>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const checkinForm = document.getElementById('checkinForm');
+const checkoutForm = document.getElementById('checkoutForm');
+const resultDiv = document.getElementById('result');
+const checkinBtn = document.querySelector('.checkin-btn');
+const checkoutBtn = document.querySelector('.checkout-btn');
+
+// Check-in form handler
+checkinForm.onsubmit = function(e) {
+    e.preventDefault();
+    const qrData = document.getElementById('checkinQrInput').value.trim();
+    if (!qrData) return;
+    
+    // Show loading state
+    checkinBtn.textContent = 'Processing...';
+    checkinBtn.disabled = true;
+    resultDiv.textContent = 'Processing check-in...';
+    resultDiv.className = 'loading';
+    
+    fetch('/checkin/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'qr_data=' + encodeURIComponent(qrData)
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (data.success) {
+            resultDiv.textContent = '✓ Check-in successful! Time: ' + data.checkin_time;
+            resultDiv.className = 'success';
+        } else {
+            if (data.error === 'Your visit date is finished.') {
+                resultDiv.textContent = '⚠️ Your visit date is finished.';
+                resultDiv.className = 'error';
+            } else {
+                resultDiv.textContent = '✗ Error: ' + data.error;
+                resultDiv.className = 'error';
+            }
+        }
+        checkinForm.reset();
+        document.getElementById('checkinQrInput').focus();
+    })
+    .catch(() => {
+        resultDiv.textContent = '✗ Network error. Please try again.';
+        resultDiv.className = 'error';
+    })
+    .finally(() => {
+        // Reset button state
+        checkinBtn.textContent = 'Check In';
+        checkinBtn.disabled = false;
+    });
+};
+
+// Check-out form handler
+checkoutForm.onsubmit = function(e) {
+    e.preventDefault();
+    const qrData = document.getElementById('checkoutQrInput').value.trim();
+    if (!qrData) return;
+    
+    // Show loading state
+    checkoutBtn.textContent = 'Processing...';
+    checkoutBtn.disabled = true;
+    resultDiv.textContent = 'Processing check-out...';
+    resultDiv.className = 'loading';
+    
+    fetch('/checkout/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'qr_data=' + encodeURIComponent(qrData)
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (data.success) {
+            resultDiv.textContent = '✓ Check-out successful! Time: ' + data.checkout_time;
+            resultDiv.className = 'success';
+        } else {
+            resultDiv.textContent = '✗ Error: ' + data.error;
+            resultDiv.className = 'error';
+        }
+        checkoutForm.reset();
+        document.getElementById('checkoutQrInput').focus();
+    })
+    .catch(() => {
+        resultDiv.textContent = '✗ Network error. Please try again.';
+        resultDiv.className = 'error';
+    })
+    .finally(() => {
+        // Reset button state
+        checkoutBtn.textContent = 'Check Out';
+        checkoutBtn.disabled = false;
+    });
+};
+
+// Add focus effects to inputs
+document.getElementById('checkinQrInput').addEventListener('focus', function() {
+    this.parentElement.style.transform = 'scale(1.02)';
+});
+
+document.getElementById('checkinQrInput').addEventListener('blur', function() {
+    this.parentElement.style.transform = 'scale(1)';
+});
+
+document.getElementById('checkoutQrInput').addEventListener('focus', function() {
+    this.parentElement.style.transform = 'scale(1.02)';
+});
+
+document.getElementById('checkoutQrInput').addEventListener('blur', function() {
+    this.parentElement.style.transform = 'scale(1)';
+});
+</script>
+</body>
+</html> 

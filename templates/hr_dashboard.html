@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HR Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/theme.css" rel="stylesheet">
+    <style>
+        .theme-navbar { background: #000 !important; color: #fff !important; }
+        .theme-navbar .navbar-brand, .theme-navbar .navbar-text, .theme-navbar .nav-link, .theme-navbar .navbar-toggler-icon { color: #fff !important; }
+        .theme-navbar .nav-link.active, .theme-navbar .nav-link:focus, .theme-navbar .nav-link:hover { color: #FFC107 !important; }
+        .theme-section-title { background: #FFC107; color: #000; font-weight: 700; border-radius: 0.5rem; padding: 0.5rem 1rem; display: inline-block; }
+        .theme-btn-yellow { background: #FFC107 !important; color: #000 !important; border: none !important; font-weight: 600; border-radius: 0.5rem; }
+        .theme-btn-yellow:hover, .theme-btn-yellow:active { background: #000 !important; color: #FFC107 !important; }
+        .theme-card-header { background: #000; color: #FFC107; font-weight: 700; border-radius: 0.5rem 0.5rem 0 0; padding: 1rem 1.5rem; }
+        .theme-card { background: #fff; border-radius: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.10); }
+        .theme-table-header { background: #FFC107; color: #000; font-weight: 700; text-align: center; }
+        .theme-table th, .theme-table td {
+            border: none !important;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0.35rem 0.15rem !important;
+            font-size: 0.93rem;
+            min-width: 70px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .theme-table th {
+            font-size: 1.01rem;
+        }
+        .theme-table tbody tr:nth-child(even) { background: #fff !important; }
+        .theme-table tbody tr:nth-child(odd) { background: #FFF8E1 !important; }
+        .theme-table tbody tr:hover { background: #FFE082 !important; }
+        .badge { background: #FFC107 !important; color: #000 !important; font-weight: 600; }
+        .btn-success, .btn-danger, .bg-success, .bg-info { background: #FFC107 !important; color: #000 !important; border: none !important; }
+
+        /* New styles for Frequent Users section */
+        .frequent-users-card {
+            background-color: var(--godrej-white, #fff);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+        .frequent-users-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .frequent-users-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000;
+        }
+        .frequent-users-table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        .frequent-users-table {
+            background: linear-gradient(to bottom, #fff, #fef5db);
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .frequent-users-table thead th {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .frequent-users-table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+        .frequent-users-table tbody tr:nth-of-type(even) {
+            background-color: rgba(254, 245, 219, 0.5);
+        }
+        .frequent-users-table tbody tr:last-of-type {
+            border-bottom: none;
+        }
+        .frequent-users-table tbody tr:hover {
+            background-color: #FFF8E1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .frequent-users-table td {
+            padding: 1rem;
+            text-align: left;
+            vertical-align: middle;
+            color: #333;
+        }
+
+        /* Minimalist Scrollbar */
+        .frequent-users-table-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+        .frequent-users-table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .frequent-users-table-wrapper::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        .frequent-users-table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        @media (max-width: 1200px) {
+          #allVisitorsModal .modal-dialog {
+            max-width: 98vw !important;
+            width: 98vw !important;
+          }
+          .theme-table th, .theme-table td {
+            font-size: 0.89rem;
+            min-width: 60px;
+            padding: 0.25rem 0.08rem !important;
+          }
+        }
+        @media (max-width: 900px) {
+          #allVisitorsModal .modal-dialog {
+            max-width: 100vw !important;
+            width: 100vw !important;
+          }
+          .visitor-details-table th, .visitor-details-table td {
+            font-size: 0.85rem;
+            padding: 0.18rem 0.05rem !important;
+          }
+        }
+        @media (max-width: 600px) {
+          #allVisitorsModal .modal-dialog {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            margin: 0;
+          }
+          .visitor-details-table th, .visitor-details-table td {
+            font-size: 0.8rem;
+            padding: 0.2rem;
+          }
+        }
+
+        /* Visitor Photo Modal */
+        .photo-modal {
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .photo-modal-backdrop {
+            position: absolute; left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8);
+        }
+        .photo-modal-content {
+            position: relative;
+            z-index: 2010;
+            max-width: 75vw; max-height: 75vh;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: 0 0 24px #000a;
+        }
+        .photo-modal-img {
+            max-width: 75vw; max-height: 75vh;
+            width: auto; height: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 24px #000a;
+            background: #222;
+            transition: transform 0.2s;
+            cursor: grab;
+        }
+        .photo-modal-close {
+            position: absolute;
+            top: 10px; right: 16px;
+            background: none; border: none;
+            color: #fff; font-size: 2rem; z-index: 2020;
+            cursor: pointer;
+            text-shadow: 0 0 8px #000;
+        }
+
+        #visitor-table-search:focus {
+            border-color: #FFD700 !important;
+            box-shadow: 0 0 0 3px #FFD70044, 0 2px 12px #ffe082;
+        }
+        @media (max-width: 600px) {
+            #visitor-search-bar-wrapper { justify-content: center; }
+            .search-bar-container { max-width: 100vw; }
+            #visitor-table-search { font-size: 15px; min-width: 0; }
+        }
+
+        .btn-processing {
+            pointer-events: none;
+            opacity: 0.7;
+            position: relative;
+        }
+        .btn-processing .spinner {
+            border: 3px solid #fff;
+            border-top: 3px solid #ffc107;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            min-width: unset;
+        }
+        @media (max-width: 1200px) {
+            .theme-table th, .theme-table td {
+                font-size: 0.89rem;
+                min-width: 60px;
+                padding: 0.25rem 0.08rem !important;
+            }
+            .table-responsive {
+                min-width: unset;
+            }
+        }
+        @media (max-width: 900px) {
+            .theme-table th, .theme-table td {
+                font-size: 0.85rem;
+                min-width: 50px;
+                padding: 0.18rem 0.05rem !important;
+            }
+            .table-responsive {
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body class="theme-form-bg">
+    <nav class="navbar navbar-expand-lg navbar-dark theme-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'hr-dashboard' %}">{% block navbar_brand %}HR Dashboard{% endblock %}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Future nav items can go here -->
+                </ul>
+                <span class="navbar-text me-3">
+                    Welcome, {{ user.get_full_name|default:"Guest User" }}
+                </span>
+                <button id="show-checked-in" class="btn btn-dashboard-filter btn-dashboard-checkedin me-2" style="background:#28a745; color:#fff; font-weight:600;">
+                    Show Check-in Visitor
+                </button>
+                {% block registration_users_button %}
+                <button class="btn theme-btn-yellow me-2" data-bs-toggle="modal" data-bs-target="#manageRegUsersModal">Manage Registration Users</button>
+                <a href="{% url 'clear-sessions' %}" class="btn theme-btn-red me-2">Clear All Sessions</a>
+                {% endblock %}
+                <a href="{% url 'logout' %}" class="btn theme-btn-yellow">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="mb-4 d-flex gap-2 align-items-center">
+            <button id="show-pending" class="btn btn-dashboard-filter btn-dashboard-pending active">Show Pending Requests</button>
+            <button id="show-approved" class="btn btn-dashboard-filter btn-dashboard-approved">Show Approved Requests</button>
+            <button id="show-rejected" class="btn btn-dashboard-filter btn-dashboard-rejected">Show Rejected Requests</button>
+            <button id="show-all-visitors" class="btn btn-dashboard-filter btn-dashboard-all" style="background:#007bff; color:#fff; font-weight:600;">Show All Visitor Details</button>
+            {% block excel_export_button %}
+            <a href="/api/export-visitors-excel/" class="btn btn-dashboard-filter" style="background:#FFC107; color:#000; font-weight:600; border:2px solid #000;" download>Download All Visitors (Excel)</a>
+            {% endblock %}
+        </div>
+        <!-- All Visitors Modal -->
+        <div class="modal fade" id="allVisitorsModal" tabindex="-1" aria-labelledby="allVisitorsModalLabel" aria-hidden="true">
+          <div class="modal-dialog" style="max-width:99vw; width:99vw; height:95vh;">
+            <div class="modal-content" style="height:95vh; min-width:1700px; max-width:99vw;">
+              <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                <h5 class="modal-title" id="allVisitorsModalLabel">All Visitor Details</h5>
+                <div class="search-bar-container" style="position:relative; width:100%; max-width:400px; margin-left: 1.5rem;">
+                  <span class="search-bar-icon" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#FFC107; font-size:1.3em; pointer-events:none;">
+                    <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="7" stroke="#FFC107" stroke-width="2"/><path d="M15 15l-3-3" stroke="#FFC107" stroke-width="2" stroke-linecap="round"/></svg>
+                  </span>
+                  <input id="visitor-table-search" type="text" placeholder="🔍 Search by Name, Phone, Email, Organization..." style="padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 12px; border: 2.5px solid #FFC107; background: #fff; color: #000; font-size: 16px; min-width: 300px; width:100%; outline: none; box-shadow: 0 2px 12px #ffe082; font-weight: 500; transition: border-color 0.2s, box-shadow 0.2s;" />
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-right:2.5rem;"></button>
+              </div>
+              <div class="modal-body" style="max-height:calc(95vh - 60px); overflow-y:auto;">
+                <div class="table-responsive p-0" style="overflow-x:unset;">
+                  <div id="no-visitor-found" style="display:none; color:#fff; background:#FFC107; border:2px solid #000; border-radius:8px; padding:1rem; text-align:center; font-weight:600;">No visitor found.</div>
+                  <table class="table visitor-details-table" style="width:100%; border:2px solid #000; table-layout:fixed;">
+                    <thead>
+                      <tr>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">First Name</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Last Name</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Email</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Phone</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Organization</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">ID Proof Type</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">ID Proof Number</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Purpose</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Mobile</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Laptop</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Photo</th>
+                        <th style="background:#FFC107; color:#000; border:2px solid #000; white-space:normal;">Employee's Reference</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in all_visits %}
+                      <tr>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.first_name }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.last_name }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.email }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.phone }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.company }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.id_proof_type }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{{ item.visitor.id_proof_number }}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">
+                          {% if item.visit.purpose == 'Other (Specify)' %}
+                            <button type="button" class="btn btn-sm btn-warning other-reason-btn" 
+                              data-other-reason="{{ item.visit.other_purpose|default:'No reason provided' }}" 
+                              style="background:#FFC107; color:#000; font-weight:600; border:1px solid #000; padding:2px 8px; border-radius:6px;">
+                              Other(View Reason)
+                            </button>
+                          {% else %}
+                            {{ item.visit.purpose }}
+                          {% endif %}
+                        </td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{% if item.visit.allow_mobile %}Yes{% else %}No{% endif %}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">{% if item.visit.allow_laptop %}Yes{% else %}No{% endif %}</td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">
+                          {% if item.visitor.photo %}
+                            <img src="/media/{{ item.visitor.photo }}" alt="Photo" class="visitor-photo-thumb" style="width:40px;height:40px;object-fit:cover;border-radius:50%;cursor:pointer;">
+                          {% else %}-{% endif %}
+                        </td>
+                        <td style="border:2px solid #000; white-space:normal; word-break:break-word;">
+                          {% if item.visit.reference_employee_name %}
+                            <button type="button" class="btn btn-sm btn-warning reference-info-btn" 
+                              data-reference-name="{{ item.visit.reference_employee_name }}"
+                              data-reference-dept="{{ item.visit.reference_employee_department }}"
+                              data-reference-purpose="{{ item.visit.reference_purpose }}"
+                              style="background:#FFC107; color:#000; font-weight:600; border:1px solid #000; padding:2px 8px; border-radius:6px;">
+                              Yes
+                            </button>
+                          {% else %}-{% endif %}
+                          {% if item.visit.created_by_id %}
+                            <button type="button" class="btn btn-sm btn-info reg-user-info-btn" 
+                              data-reg-user="Registration User"
+                              style="background:#007bff; color:#fff; font-weight:600; border:1px solid #000; padding:2px 8px; border-radius:6px; margin-left:4px;">
+                              User
+                            </button>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="pending-table-section">
+            <h2 class="theme-section-title mb-4">Pending Visit Requests</h2>
+            {% if pending_requests %}
+                <div class="table-responsive">
+                    <table class="table theme-table table-striped table-hover">
+                        <thead class="theme-table-header">
+                            <tr>
+                                <th>Visitor</th>
+                                <th>Email</th>
+                                <th>Organization</th>
+                                <th>Purpose</th>
+                                <th>Date & Time</th>
+                                <th>End Time</th>
+                                <th>Valid Upto</th>
+                                <th>Reference Employee Name</th>
+                                <th>Device Permissions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pending_requests %}
+                                <tr>
+                                    <td>{{ item.visitor.first_name }} {{ item.visitor.last_name }}</td>
+                                    <td>{{ item.visitor.email }}</td>
+                                    <td>{{ item.visitor.company }}</td>
+                                    <td>{{ item.request.purpose }}</td>
+                                    <td>
+                                        {% if item.request.start_time_ist %}
+                                            {{ item.request.start_time_ist|date:"d/m/Y" }} at {{ item.request.start_time_ist|time:"H:i" }} IST
+                                        {% else %}
+                                            {{ item.request.start_time|date:"d/m/Y" }} at {{ item.request.start_time|time:"H:i" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.request.end_time|time:"H:i" }}</td>
+                                    <td>
+                                      {% if item.request.valid_upto_ist %}
+                                        {{ item.request.valid_upto_ist|date:"d/m/Y" }}
+                                      {% elif item.request.valid_upto %}
+                                        {{ item.request.valid_upto|date:"d/m/Y" }}
+                                      {% else %}
+                                        -
+                                      {% endif %}
+                                    </td>
+                                    <td>{% if item.request.reference_employee_name %}{{ item.request.reference_employee_name }}{% else %}-{% endif %}</td>
+                                    <td>
+                                        {% if item.request.allow_mobile %}
+                                            <span class="badge bg-success">Mobile</span>
+                                        {% endif %}
+                                        {% if item.request.allow_laptop %}
+                                            <span class="badge bg-info">Laptop</span>
+                                        {% endif %}
+                                        {% if not item.request.allow_mobile and not item.request.allow_laptop %}
+                                            <span class="text-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{% url 'update-request-status' item.request.id 'APPROVE' %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-approve btn-sm">Approve</button>
+                                        </form>
+                                        <form method="post" action="{% url 'update-request-status' item.request.id 'REJECT' %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-reject btn-sm">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">No pending visit requests at the moment.</div>
+            {% endif %}
+            <!-- Frequent Users Section (only show with pending) -->
+            <div id="frequent-users-section" class="frequent-users-card">
+                <div class="frequent-users-header">
+                    <h2 class="frequent-users-title">Frequent Visitors</h2>
+                </div>
+                {% if frequent_visitors %}
+                    <div class="frequent-users-table-wrapper">
+                        <table class="frequent-users-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
+                                    <th>Number of Visits</th>
+                                    <th>Last Visit Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for visitor in frequent_visitors %}
+                                <tr>
+                                    <td>{{ visitor.first_name }} {{ visitor.last_name }}</td>
+                                    <td>{{ visitor.email }}</td>
+                                    <td>{{ visitor.phone }}</td>
+                                    <td>{{ visitor.num_visits }}</td>
+                                    <td>
+                                        {% if visitor.last_visit_ist %}
+                                            {{ visitor.last_visit_ist|date:'d/m/Y H:i' }} IST
+                                        {% elif visitor.last_visit %}
+                                            {{ visitor.last_visit|date:'Y-m-d H:i' }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No frequent users found.</div>
+                {% endif %}
+            </div>
+        </div>
+        <div id="approved-table-section" style="display:none;">
+            <h2 class="theme-section-title mb-4">Approved Requests</h2>
+            {% if approved_requests %}
+            <div class="table-responsive">
+                <table class="table theme-table table-striped table-hover">
+                    <thead class="theme-table-header">
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Email</th>
+                            <th>Organization</th>
+                            <th>Purpose</th>
+                            <th>Date & Time</th>
+                            <th>End Time</th>
+                            <th>Valid Upto</th>
+                            <th>Reference Employee Name</th>
+                            <th>Device Permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in approved_requests %}
+                            <tr>
+                                <td>{{ item.visitor.first_name }} {{ item.visitor.last_name }}</td>
+                                <td>{{ item.visitor.email }}</td>
+                                <td>{{ item.visitor.company }}</td>
+                                <td>{{ item.request.purpose }}</td>
+                                <td>
+                                    {% if item.request.start_time_ist %}
+                                        {{ item.request.start_time_ist|date:"d/m/Y" }} at {{ item.request.start_time_ist|time:"H:i" }} IST
+                                    {% else %}
+                                        {{ item.request.start_time|date:"d/m/Y" }} at {{ item.request.start_time|time:"H:i" }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.request.end_time|time:"H:i" }}</td>
+                                <td>
+                                  {% if item.request.valid_upto_ist %}
+                                    {{ item.request.valid_upto_ist|date:"d/m/Y" }}
+                                  {% elif item.request.valid_upto %}
+                                    {{ item.request.valid_upto|date:"d/m/Y" }}
+                                  {% else %}
+                                    -
+                                  {% endif %}
+                                </td>
+                                <td>{% if item.request.reference_employee_name %}{{ item.request.reference_employee_name }}{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if item.request.allow_mobile %}
+                                        <span class="badge bg-success">Mobile</span>
+                                    {% endif %}
+                                    {% if item.request.allow_laptop %}
+                                        <span class="badge bg-info">Laptop</span>
+                                    {% endif %}
+                                    {% if not item.request.allow_mobile and not item.request.allow_laptop %}
+                                        <span class="text-muted">None</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="alert alert-info">No approved requests found.</div>
+            {% endif %}
+        </div>
+        <div id="rejected-table-section" style="display:none;">
+            <h2 class="theme-section-title mb-4">Rejected Requests</h2>
+            {% if rejected_requests %}
+            <div class="table-responsive">
+                <table class="table theme-table table-striped table-hover">
+                    <thead class="theme-table-header">
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Email</th>
+                            <th>Organization</th>
+                            <th>Purpose</th>
+                            <th>Date & Time</th>
+                            <th>End Time</th>
+                            <th>Valid Upto</th>
+                            <th>Reference Employee Name</th>
+                            <th>Device Permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in rejected_requests %}
+                            <tr>
+                                <td>{{ item.visitor.first_name }} {{ item.visitor.last_name }}</td>
+                                <td>{{ item.visitor.email }}</td>
+                                <td>{{ item.visitor.company }}</td>
+                                <td>{{ item.request.purpose }}</td>
+                                <td>
+                                    {% if item.request.start_time_ist %}
+                                        {{ item.request.start_time_ist|date:"d/m/Y" }} at {{ item.request.start_time_ist|time:"H:i" }} IST
+                                    {% else %}
+                                        {{ item.request.start_time|date:"d/m/Y" }} at {{ item.request.start_time|time:"H:i" }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.request.end_time|time:"H:i" }}</td>
+                                <td>{% if item.request.valid_upto %}{{ item.request.valid_upto|date:"F d, Y" }}{% else %}-{% endif %}</td>
+                                <td>{% if item.request.reference_employee_name %}{{ item.request.reference_employee_name }}{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if item.request.allow_mobile %}
+                                        <span class="badge bg-success">Mobile</span>
+                                    {% endif %}
+                                    {% if item.request.allow_laptop %}
+                                        <span class="badge bg-info">Laptop</span>
+                                    {% endif %}
+                                    {% if not item.request.allow_mobile and not item.request.allow_laptop %}
+                                        <span class="text-muted">None</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="alert alert-info">No rejected requests found.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add this modal at the end of the body -->
+    <div class="modal fade" id="otherReasonModal" tabindex="-1" aria-labelledby="otherReasonModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#FFC107; border:2px solid #000; color:#fff;">
+          <div class="modal-header" style="border-bottom:1px solid #000;">
+            <h5 class="modal-title" id="otherReasonModalLabel" style="color:#000;">Other Purpose Reason</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="otherReasonModalBody" style="color:#fff; font-size:1.1rem;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visitor Photo Modal -->
+    <div id="photoModal" class="photo-modal" style="display:none;">
+      <div class="photo-modal-backdrop"></div>
+      <div class="photo-modal-content">
+        <button class="photo-modal-close" id="photoModalClose" aria-label="Close">&#10060;</button>
+        <img id="photoModalImg" src="" alt="Visitor Photo" class="photo-modal-img">
+      </div>
+    </div>
+
+    <!-- Registration Users Modal -->
+    <div class="modal fade" id="manageRegUsersModal" tabindex="-1" aria-labelledby="manageRegUsersModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="manageRegUsersModalLabel" style="color:#000; font-weight:700;">Manage Registration Users</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="reg-user-modal-message" style="display:none; margin-bottom:10px;"></div>
+            <div id="reg-users-list">
+              <h6 style="color:#000; font-weight:700;">Existing Registration Users</h6>
+              <ul class="list-group mb-3" id="reg-users-ul">
+                <!-- Registration users will be loaded here by JavaScript -->
+              </ul>
+            </div>
+            <hr>
+            <h6 style="color:#000; font-weight:700;">Add New Registration User</h6>
+            <form id="add-reg-user-form-debug" autocomplete="off">
+              {% csrf_token %}
+              <div class="mb-2">
+                <input type="text" class="form-control" id="reg-employee-name" name="employee_name" required placeholder="Employee Name" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; font-weight:500;">
+              </div>
+              <div class="mb-2">
+                <input type="text" class="form-control" id="reg-employee-department" name="employee_department" required placeholder="Employee Department" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; font-weight:500;">
+              </div>
+              <div class="mb-2">
+                <input type="text" class="form-control" id="reg-username" name="username" required placeholder="Username" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; font-weight:500;">
+              </div>
+              <div class="mb-2">
+                <input type="password" class="form-control" id="reg-password" name="password" required placeholder="Password" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; font-weight:500;">
+              </div>
+              <div class="mb-2">
+                <input type="email" class="form-control" id="reg-email" name="email" placeholder="Email (optional)" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; font-weight:500;">
+              </div>
+              <button type="submit" class="btn theme-btn-yellow" style="font-weight:600; border-radius:8px;">Add Registration User</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add this modal at the end of the body for reference info -->
+    <div class="modal fade" id="referenceInfoModal" tabindex="-1" aria-labelledby="referenceInfoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#FFC107; border:2px solid #000; color:#fff;">
+          <div class="modal-header" style="border-bottom:1px solid #000;">
+            <h5 class="modal-title" id="referenceInfoModalLabel" style="color:#000;">Employee Reference Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="referenceInfoModalBody" style="color:#000; font-size:1.1rem;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration User Modal -->
+    <div class="modal fade" id="regUserModal" tabindex="-1" aria-labelledby="regUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:#007bff; border:2px solid #000; color:#fff;">
+          <div class="modal-header" style="border-bottom:1px solid #000;">
+            <h5 class="modal-title" id="regUserModalLabel" style="color:#fff;">Registration User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="regUserModalBody" style="color:#fff; font-size:1.1rem;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for checked-in visitors -->
+    <div class="modal fade" id="checkedInModal" tabindex="-1" aria-labelledby="checkedInModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="checkedInModalLabel">Currently Checked-in Visitors</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Visitor ID</th>
+                  <th>Name</th>
+                  <th>Company</th>
+                  <th>Purpose</th>
+                  <th>Check-in Time</th>
+                  <th>Day</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="checkedInTableBody">
+                {% if checked_in_visitors %}
+                  {% for item in checked_in_visitors %}
+                    <!-- DEBUG: Rendering Visitor ID: {{ item.visit.visitor.id }} -->
+                    <tr>
+                      <td>{{ item.visit.visitor.id }}</td>
+                      <td>{{ item.visit.visitor.first_name }} {{ item.visit.visitor.last_name }}</td>
+                      <td>{{ item.visit.visitor.company }}</td>
+                      <td>{{ item.visit.purpose }}</td>
+                      <td class="checkin-time-ist">{{ item.checkin_time|date:"Y-m-d H:i:s" }}</td>
+                      <td>Day {{ item.day_num }}</td>
+                      <td>
+                        <form method="post" action="{% url 'manual_checkout_visitor' %}" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="visit_id" value="{{ item.visit.id }}">
+                          <button type="submit" class="btn btn-warning btn-sm">Manual Check-out</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="7" style="text-align:center; color:#888;">No visitors currently checked in.</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Working Indian Timezone Script -->
+    <script>
+    // Get current IST time
+    function getCurrentISTTime() {
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000; // IST offset (UTC+5:30)
+        const istTime = new Date(now.getTime() + istOffset);
+        
+        const day = String(istTime.getDate()).padStart(2, '0');
+        const month = String(istTime.getMonth() + 1).padStart(2, '0');
+        const year = istTime.getFullYear();
+        const hours = String(istTime.getHours()).padStart(2, '0');
+        const minutes = String(istTime.getMinutes()).padStart(2, '0');
+        const seconds = String(istTime.getSeconds()).padStart(2, '0');
+        
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} IST`;
+    }
+    
+
+    
+    // Convert any time string to IST format
+    function convertToIST(timeString) {
+        if (!timeString || timeString === '-') return '-';
+        
+        try {
+            // Handle different time formats
+            let date;
+            if (timeString.includes('T')) {
+                // ISO format: 2025-08-13T17:51:28
+                date = new Date(timeString);
+            } else if (timeString.includes('-')) {
+                // Date format: 2025-08-13 17:51:28
+                date = new Date(timeString.replace(' ', 'T'));
+            } else if (timeString.includes(':')) {
+                // Time format: 17:51:28
+                const today = new Date();
+                const [hours, minutes, seconds] = timeString.split(':');
+                date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 
+                              parseInt(hours), parseInt(minutes), parseInt(seconds));
+            } else {
+                return timeString;
+            }
+            
+            if (isNaN(date.getTime())) return timeString;
+            
+            // Add IST offset
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const istDate = new Date(date.getTime() + istOffset);
+            
+            // Format as IST
+            const day = String(istDate.getDate()).padStart(2, '0');
+            const month = String(istDate.getMonth() + 1).padStart(2, '0');
+            const year = istDate.getFullYear();
+            const hours = String(istDate.getHours()).padStart(2, '0');
+            const minutes = String(istDate.getMinutes()).padStart(2, '0');
+            const seconds = String(istDate.getSeconds()).padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} IST`;
+        } catch (error) {
+            return timeString;
+        }
+    }
+    
+    // Convert date to Indian format
+    function convertDateToIST(dateString) {
+        if (!dateString || dateString === '-') return '-';
+        
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const istDate = new Date(date.getTime() + istOffset);
+            
+            const day = String(istDate.getDate()).padStart(2, '0');
+            const month = String(istDate.getMonth() + 1).padStart(2, '0');
+            const year = istDate.getFullYear();
+            
+            return `${day}/${month}/${year} IST`;
+        } catch (error) {
+            return dateString;
+        }
+    }
+    
+    // Convert time to IST
+    function convertTimeToIST(timeString) {
+        if (!timeString || timeString === '-') return '-';
+        
+        try {
+            const [hours, minutes] = timeString.split(':');
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const date = new Date(2000, 0, 1, parseInt(hours), parseInt(minutes));
+            const istDate = new Date(date.getTime() + istOffset);
+            
+            const istHours = String(istDate.getHours()).padStart(2, '0');
+            const istMinutes = String(istDate.getMinutes()).padStart(2, '0');
+            
+            return `${istHours}:${istMinutes} IST`;
+        } catch (error) {
+            return timeString;
+        }
+    }
+    
+
+
+        
+
+        
+        // Update end times
+        const endTimeCells = document.querySelectorAll('td');
+        endTimeCells.forEach(cell => {
+            const text = cell.textContent;
+            if (text && text.match(/^\d{1,2}:\d{2}$/)) {
+                // Format: "17:51"
+                cell.textContent = convertTimeToIST(text);
+            }
+        });
+        
+
+    
+
+    </script>
+    
+    <script>
+    const regUsersModal = document.getElementById('manageRegUsersModal');
+    regUsersModal.addEventListener('show.bs.modal', fetchRegistrationUsers);
+    const regUserForm = document.getElementById('add-reg-user-form-debug');
+    if (regUserForm) {
+      regUserForm.onsubmit = addRegistrationUser;
+    }
+    document.getElementById('reg-users-ul').onclick = function(e) {
+      if (e.target.classList.contains('remove-reg-user-btn')) {
+        const userId = e.target.getAttribute('data-user-id');
+        removeRegistrationUser(userId);
+      }
+    };
+
+    function addRegistrationUser(e) {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const csrfToken = getCookie('csrftoken');
+      fetch('/api/add-registration-user/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify({ username, email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              showRegUserModalMessage('Registration user added successfully!', true);
+              document.getElementById('add-reg-user-form-debug').reset();
+              fetchRegistrationUsers();
+              setTimeout(() => {
+                  var modal = bootstrap.Modal.getInstance(document.getElementById('manageRegUsersModal'));
+                  if (modal) modal.hide();
+              }, 1000);
+          } else {
+              showRegUserModalMessage(data.error || 'Failed to add user.', false);
+          }
+      })
+      .catch(() => {
+          showRegUserModalMessage('An error occurred. Please try again.', false);
+      });
+      return false;
+    }
+
+    function removeRegistrationUser(userId) {
+        if (!confirm('Are you sure you want to remove this user?')) return;
+        const formData = new FormData();
+        formData.append('user_id', userId);
+        fetch('/api/delete-registration-user/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchRegistrationUsers();
+                showRegUserModalMessage('Registration user removed successfully!', true);
+            } else {
+                showRegUserModalMessage(data.error || 'Failed to remove user.', false);
+            }
+        });
+    }
+
+    function fetchRegistrationUsers() {
+        fetch('/api/registration-users-list/')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('reg-users-ul');
+                list.innerHTML = '';
+                if (!data.users || data.users.length === 0) {
+                    list.innerHTML = '<li class="list-group-item" style="background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px;">No registration users found.</li>';
+                    return;
+                }
+                data.users.forEach(user => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.style = 'background:#FFF8E1; color:#222; border:1.5px solid #FFC107; border-radius:8px; margin-bottom:6px;';
+                    li.innerHTML = `<span style='font-weight:600; color:#222;'>${user.username}</span>` +
+                        `<span class='badge rounded-pill remove-reg-user-btn' data-user-id='${user.id}' style='cursor:pointer; background:#dc3545 !important; color:#fff !important; font-weight:600; border:1.5px solid #dc3545;'>Remove</span>`;
+                    list.appendChild(li);
+                });
+            });
+    }
+
+    function showRegUserModalMessage(msg, isSuccess) {
+        const msgDiv = document.getElementById('reg-user-modal-message');
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = isSuccess ? '#d4edda' : '#fff3cd';
+        msgDiv.style.color = isSuccess ? '#155724' : '#856404';
+        msgDiv.style.border = isSuccess ? '1.5px solid #28a745' : '1.5px solid #ffc107';
+        msgDiv.style.padding = '8px 12px';
+        msgDiv.style.borderRadius = '8px';
+        msgDiv.style.fontWeight = '600';
+        msgDiv.innerText = msg;
+        setTimeout(() => { msgDiv.style.display = 'none'; }, 3500);
+    }
+
+    // Handler for Other(View Reason) button
+    document.querySelectorAll('.other-reason-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var reason = this.getAttribute('data-other-reason');
+        var modalBody = document.getElementById('otherReasonModalBody');
+        modalBody.textContent = reason;
+        var modal = new bootstrap.Modal(document.getElementById('otherReasonModal'));
+        modal.show();
+      });
+    });
+
+    // Photo modal logic
+    let photoModal = document.getElementById('photoModal');
+    let photoModalImg = document.getElementById('photoModalImg');
+    let photoModalClose = document.getElementById('photoModalClose');
+    let photoModalBackdrop = document.querySelector('.photo-modal-backdrop');
+    let scale = 1, originX = 0, originY = 0, isDragging = false, startX = 0, startY = 0, lastX = 0, lastY = 0;
+
+    document.querySelectorAll('.visitor-photo-thumb').forEach(function(img) {
+      img.addEventListener('click', function(e) {
+        photoModalImg.src = this.src;
+        photoModal.style.display = 'flex';
+        scale = 1;
+        photoModalImg.style.transform = 'scale(1) translate(0px,0px)';
+        lastX = 0; lastY = 0;
+      });
+    });
+
+    function closePhotoModal() {
+      photoModal.style.display = 'none';
+      photoModalImg.src = '';
+    }
+    photoModalClose.onclick = closePhotoModal;
+    photoModalBackdrop.onclick = closePhotoModal;
+
+    // Close on click outside image
+    photoModal.addEventListener('click', function(e) {
+      if (e.target === photoModal) closePhotoModal();
+    });
+
+    // Zoom with mouse wheel
+    photoModalImg.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let delta = e.deltaY > 0 ? -0.1 : 0.1;
+      scale = Math.min(Math.max(0.5, scale + delta), 5);
+      photoModalImg.style.transform = `scale(${scale}) translate(${lastX}px,${lastY}px)`;
+    });
+
+    // Drag to move image when zoomed
+    photoModalImg.addEventListener('mousedown', function(e) {
+      if (scale === 1) return;
+      isDragging = true;
+      startX = e.clientX - lastX;
+      startY = e.clientY - lastY;
+      photoModalImg.style.cursor = 'grabbing';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      lastX = e.clientX - startX;
+      lastY = e.clientY - startY;
+      photoModalImg.style.transform = `scale(${scale}) translate(${lastX}px,${lastY}px)`;
+    });
+    document.addEventListener('mouseup', function() {
+      isDragging = false;
+      photoModalImg.style.cursor = 'grab';
+    });
+
+    // Pinch zoom for touch devices
+    let lastDist = null;
+    photoModalImg.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        lastDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      }
+    });
+    photoModalImg.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2 && lastDist) {
+        let newDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        let delta = (newDist - lastDist) / 200;
+        scale = Math.min(Math.max(0.5, scale + delta), 5);
+        photoModalImg.style.transform = `scale(${scale}) translate(${lastX}px,${lastY}px)`;
+        lastDist = newDist;
+      }
+    });
+    photoModalImg.addEventListener('touchend', function(e) {
+      if (e.touches.length < 2) lastDist = null;
+    });
+
+    // Real-time search for Visitor All Details table
+    const searchInput = document.getElementById('visitor-table-search');
+    const table = document.querySelector('.visitor-details-table');
+    const rows = table ? table.querySelectorAll('tbody tr') : [];
+    const noVisitorMsg = document.getElementById('no-visitor-found');
+    if (searchInput && table) {
+      searchInput.addEventListener('input', function() {
+        const val = this.value.trim().toLowerCase();
+        let found = 0;
+        rows.forEach(row => {
+          let text = row.textContent.toLowerCase();
+          if (text.indexOf(val) !== -1) {
+            row.style.display = '';
+            found++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        if (found === 0) {
+          noVisitorMsg.style.display = 'block';
+        } else {
+          noVisitorMsg.style.display = 'none';
+        }
+      });
+    }
+
+    // Helper to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Handler for Employee Reference Yes button
+    document.querySelectorAll('.reference-info-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var name = this.getAttribute('data-reference-name') || '-';
+        var dept = this.getAttribute('data-reference-dept') || '-';
+        var purpose = this.getAttribute('data-reference-purpose') || '-';
+        var modalBody = document.getElementById('referenceInfoModalBody');
+        modalBody.innerHTML =
+          '<b>Reference Employee Name:</b> ' + name + '<br>' +
+          '<b>Department:</b> ' + dept + '<br>' +
+          '<b>Purpose:</b> ' + purpose;
+        var modal = new bootstrap.Modal(document.getElementById('referenceInfoModal'));
+        modal.show();
+      });
+    });
+
+    // Registration User button logic
+    document.querySelectorAll('.reg-user-info-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var regUser = this.getAttribute('data-reg-user');
+        var modalBody = document.getElementById('regUserModalBody');
+        modalBody.textContent = regUser;
+        var modal = new bootstrap.Modal(document.getElementById('regUserModal'));
+        modal.show();
+      });
+    });
+
+    // Dashboard filter buttons functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const showPendingBtn = document.getElementById('show-pending');
+        const showApprovedBtn = document.getElementById('show-approved');
+        const showRejectedBtn = document.getElementById('show-rejected');
+        const showAllVisitorsBtn = document.getElementById('show-all-visitors');
+        
+        const pendingSection = document.getElementById('pending-table-section');
+        const approvedSection = document.getElementById('approved-table-section');
+        const rejectedSection = document.getElementById('rejected-table-section');
+        
+        // Show pending requests (default)
+        function showPending() {
+            pendingSection.style.display = 'block';
+            approvedSection.style.display = 'none';
+            rejectedSection.style.display = 'none';
+            
+            // Update button states
+            showPendingBtn.classList.add('active');
+            showApprovedBtn.classList.remove('active');
+            showRejectedBtn.classList.remove('active');
+            showAllVisitorsBtn.classList.remove('active');
+        }
+        
+        // Show approved requests
+        function showApproved() {
+            pendingSection.style.display = 'none';
+            approvedSection.style.display = 'block';
+            rejectedSection.style.display = 'none';
+            
+            // Update button states
+            showPendingBtn.classList.remove('active');
+            showApprovedBtn.classList.add('active');
+            showRejectedBtn.classList.remove('active');
+            showAllVisitorsBtn.classList.remove('active');
+        }
+        
+        // Show rejected requests
+        function showRejected() {
+            pendingSection.style.display = 'none';
+            approvedSection.style.display = 'none';
+            rejectedSection.style.display = 'block';
+            
+            // Update button states
+            showPendingBtn.classList.remove('active');
+            showApprovedBtn.classList.remove('active');
+            showRejectedBtn.classList.add('active');
+            showAllVisitorsBtn.classList.remove('active');
+        }
+        
+        // Show all visitors modal
+        function showAllVisitors() {
+            pendingSection.style.display = 'none';
+            approvedSection.style.display = 'none';
+            rejectedSection.style.display = 'none';
+            
+            // Update button states
+            showPendingBtn.classList.remove('active');
+            showApprovedBtn.classList.remove('active');
+            showRejectedBtn.classList.remove('active');
+            showAllVisitorsBtn.classList.add('active');
+            
+            // Open the all visitors modal
+            const modal = new bootstrap.Modal(document.getElementById('allVisitorsModal'));
+            modal.show();
+        }
+        
+        // Add event listeners
+        if (showPendingBtn) showPendingBtn.addEventListener('click', showPending);
+        if (showApprovedBtn) showApprovedBtn.addEventListener('click', showApproved);
+        if (showRejectedBtn) showRejectedBtn.addEventListener('click', showRejected);
+        if (showAllVisitorsBtn) showAllVisitorsBtn.addEventListener('click', showAllVisitors);
+    });
+
+    document.getElementById('show-checked-in').onclick = function() {
+        fetch('/checked-in-visitors/')
+          .then(resp => resp.json())
+          .then(data => {
+            const tbody = document.getElementById('checkedInTableBody');
+            tbody.innerHTML = '';
+            if (data.visitors.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#888;">No visitors currently checked in.</td></tr>';
+            } else {
+              data.visitors.forEach(v => {
+                const tr = document.createElement('tr');
+                // Convert checkin_time to IST format
+                const istCheckinTime = convertToIST(v.checkin_time);
+                tr.innerHTML = `<td>${v.id}</td><td>${v.name}</td><td>${v.company}</td><td>${v.purpose}</td><td class="checkin-time-ist">${istCheckinTime}</td><td>Day ${v.day_num}</td><td><button class='btn btn-sm btn-danger manual-checkout-btn' data-visit-id='${v.id}'>Manual Check-out</button></td>`;
+                tbody.appendChild(tr);
+              });
+            }
+            new bootstrap.Modal(document.getElementById('checkedInModal')).show();
+          });
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('manual-checkout-btn')) {
+            const btn = e.target;
+            const visitId = btn.getAttribute('data-visit-id');
+            btn.disabled = true;
+            btn.textContent = 'Checking out...';
+            fetch('/manual-checkout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ visit_id: visitId })
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the row with the new checkout time in IST format
+                    const row = btn.closest('tr');
+                    const istCheckoutTime = convertToIST(data.checkout_time);
+                    row.children[4].textContent = istCheckoutTime;
+                    btn.remove();
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Manual Check-out';
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.textContent = 'Manual Check-out';
+                alert('Network error.');
+            });
+        }
+    });
+    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Listen for all Bootstrap modal close events and reload the page
+  document.querySelectorAll('.modal').forEach(function(modal) {
+    modal.addEventListener('hidden.bs.modal', function() {
+      location.reload();
+    });
+  });
+});
+    </script>
+</body>
+</html> 

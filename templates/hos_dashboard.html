@@ -1,0 +1,365 @@
+{% extends 'hr_dashboard.html' %}
+<!-- 
+HOS Dashboard - Consistent with HR Dashboard Time Display
+All times are displayed in Indian Standard Time (IST) format: d/m/Y at H:i IST
+This dashboard extends hr_dashboard.html and inherits the same time display format
+-->
+{% block title %}HOS Dashboard{% endblock %}
+
+{% block navbar_brand %}
+    HOS Dashboard
+{% endblock %}
+
+{% block registration_users_button %}{% endblock %}
+{% block registration_users_modal %}{% endblock %}
+
+{% block excel_export_button %}
+<a href="/api/export-hos-visitors-excel/" class="btn btn-dashboard-filter" style="background:#FFC107; color:#000; font-weight:600; border:2px solid #000;" download>Download HOS Visitors (Excel)</a>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+<!-- Override the main dashboard sections to ensure IST time display -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Force IST time display for all time fields in the HOS dashboard
+    function forceISTDisplay() {
+        console.log('Forcing IST display for all time fields...');
+        
+        // Find all time-related cells and convert them to IST format
+        const allCells = document.querySelectorAll('td');
+        allCells.forEach(cell => {
+            const text = cell.textContent.trim();
+            
+            // Skip if already converted, empty, or contains special characters
+            if (!text || text.includes('IST') || text === '-' || text === '') {
+                return;
+            }
+            
+            // Convert various time formats to IST
+            let newText = text;
+            let wasConverted = false;
+            
+            // Convert "Month Day, Year at HH:MM" format (e.g., "August 13, 2025 at 17:51")
+            if (text.includes(' at ') && text.match(/[A-Za-z]+ \d{1,2}, \d{4} at \d{1,2}:\d{2}/)) {
+                try {
+                    const parts = text.split(' at ');
+                    if (parts.length === 2) {
+                        const datePart = parts[0];
+                        const timePart = parts[1];
+                        
+                        // Parse the date and time
+                        const date = new Date(datePart + ' ' + timePart);
+                        if (!isNaN(date.getTime())) {
+                            // Add IST offset (5.5 hours)
+                            const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+                            const day = String(istDate.getDate()).padStart(2, '0');
+                            const month = String(istDate.getMonth() + 1).padStart(2, '0');
+                            const year = istDate.getFullYear();
+                            const hours = String(istDate.getHours()).padStart(2, '0');
+                            const minutes = String(istDate.getMinutes()).padStart(2, '0');
+                            
+                            newText = `${day}/${month}/${year} at ${hours}:${minutes} IST`;
+                            wasConverted = true;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error converting date time format:', error);
+                }
+            }
+            // Convert ISO datetime format "YYYY-MM-DD HH:MM:SS" to IST
+            else if (text.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
+                try {
+                    const date = new Date(text + 'Z'); // Add Z to treat as UTC
+                    if (!isNaN(date.getTime())) {
+                        // Add IST offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+                        const day = String(istDate.getDate()).padStart(2, '0');
+                        const month = String(istDate.getMonth() + 1).padStart(2, '0');
+                        const year = istDate.getFullYear();
+                        const hours = String(istDate.getHours()).padStart(2, '0');
+                        const minutes = String(istDate.getMinutes()).padStart(2, '0');
+                        
+                        newText = `${day}/${month}/${year} at ${hours}:${minutes} IST`;
+                        wasConverted = true;
+                    }
+                } catch (error) {
+                    console.error('Error converting ISO datetime:', error);
+                }
+            }
+            // Convert date format "YYYY-MM-DD" to IST
+            else if (text.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                try {
+                    const date = new Date(text + 'T00:00:00Z'); // Add time and treat as UTC
+                    if (!isNaN(date.getTime())) {
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000)); // Add IST offset
+                        const day = String(istDate.getDate()).padStart(2, '0');
+                        const month = String(istDate.getMonth() + 1).padStart(2, '0');
+                        const year = istDate.getFullYear();
+                        
+                        newText = `${day}/${month}/${year}`;
+                        wasConverted = true;
+                    }
+                } catch (error) {
+                    console.error('Error converting date format:', error);
+                }
+            }
+            // Convert time format "HH:MM" to IST
+            else if (text.match(/^\d{1,2}:\d{2}$/)) {
+                try {
+                    const [hours, minutes] = text.split(':').map(Number);
+                    let istHours = hours + 5; // Add 5 hours for IST
+                    let istMinutes = minutes + 30; // Add 30 minutes for IST
+                    
+                    if (istMinutes >= 60) {
+                        istHours += 1;
+                        istMinutes -= 60;
+                    }
+                    
+                    if (istHours >= 24) {
+                        istHours -= 24;
+                    }
+                    
+                    newText = `${String(istHours).padStart(2, '0')}:${String(istMinutes).padStart(2, '0')} IST`;
+                    wasConverted = true;
+                } catch (error) {
+                    console.error('Error converting time format:', error);
+                }
+            }
+            
+            // Update the cell if converted
+            if (wasConverted && newText !== text) {
+                cell.textContent = newText;
+                console.log(`Converted to IST: "${text}" → "${newText}"`);
+            }
+        });
+        
+        console.log('IST display conversion completed');
+    }
+    
+    // Run conversion multiple times to catch all content
+    setTimeout(forceISTDisplay, 500);
+    setTimeout(forceISTDisplay, 1000);
+    setTimeout(forceISTDisplay, 2000);
+    setTimeout(forceISTDisplay, 5000);
+    
+    // Also run when dashboard sections are shown
+    const dashboardButtons = ['show-pending', 'show-approved', 'show-rejected', 'show-all-visitors'];
+    dashboardButtons.forEach(buttonId => {
+        const button = document.getElementById(buttonId);
+        if (button) {
+            button.addEventListener('click', function() {
+                setTimeout(forceISTDisplay, 300);
+                setTimeout(forceISTDisplay, 800);
+                setTimeout(forceISTDisplay, 1500);
+            });
+        }
+    });
+    
+    // Monitor for dynamic content changes
+    const observer = new MutationObserver(function(mutations) {
+        let shouldConvert = false;
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                shouldConvert = true;
+            }
+        });
+        
+        if (shouldConvert) {
+            setTimeout(forceISTDisplay, 100);
+            setTimeout(forceISTDisplay, 500);
+        }
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Periodic conversion to catch any missed elements
+    setInterval(forceISTDisplay, 10000); // Run every 10 seconds
+});
+</script>
+{% endblock %}
+
+{% block hos_user_button %}
+<td style="border:2px solid #000; white-space:normal; word-break:break-word;">
+  {% if visit.reference_employee_name %}
+    <button type="button" class="btn btn-sm btn-warning reference-info-btn" 
+      data-reference-name="{{ visit.reference_employee_name }}"
+      data-reference-dept="{{ visit.reference_employee_department }}"
+      data-reference-purpose="{{ visit.reference_purpose }}"
+      style="background:#FFC107; color:#000; font-weight:600; border:1px solid #000; padding:2px 8px; border-radius:6px;">
+      Yes
+    </button>
+  {% else %}-{% endif %}
+  {% if visit.created_by %}
+    <button type="button" class="btn btn-sm btn-info reg-user-info-btn" 
+      data-reg-user="{{ visit.created_by.get_full_name|default:visit.created_by.username }}"
+      style="background:#007bff; color:#fff; font-weight:600; border:1px solid #000; padding:2px 8px; border-radius:6px; margin-left:4px;">
+      User
+    </button>
+  {% endif %}
+</td>
+{% endblock %}
+
+<!-- Registration User Modal -->
+<div class="modal fade" id="regUserModal" tabindex="-1" aria-labelledby="regUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:#007bff; border:2px solid #000; color:#fff;">
+      <div class="modal-header" style="border-bottom:1px solid #000;">
+        <h5 class="modal-title" id="regUserModalLabel" style="color:#fff;">Registration User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="regUserModalBody" style="color:#fff; font-size:1.1rem;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reference Info Modal -->
+<div class="modal fade" id="referenceInfoModal" tabindex="-1" aria-labelledby="referenceInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:#FFC107; border:2px solid #000; color:#fff;">
+      <div class="modal-header" style="border-bottom:1px solid #000;">
+        <h5 class="modal-title" id="referenceInfoModalLabel" style="color:#000;">Employee Reference Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="referenceInfoModalBody" style="color:#000; font-size:1.1rem;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Other Reason Modal -->
+<div class="modal fade" id="otherReasonModal" tabindex="-1" aria-labelledby="otherReasonModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:#FFC107; border:2px solid #000; color:#fff;">
+      <div class="modal-header" style="border-bottom:1px solid #000;">
+        <h5 class="modal-title" id="otherReasonModalLabel" style="color:#000;">Other Purpose Reason</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="otherReasonModalBody" style="color:#fff; font-size:1.1rem;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Checked-in Visitors Modal for HOS Dashboard -->
+<div class="modal fade" id="checkedInModal" tabindex="-1" aria-labelledby="checkedInModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="checkedInModalLabel">Currently Checked-in Visitors</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Visitor ID</th>
+              <th>Name</th>
+              <th>Company</th>
+              <th>Purpose</th>
+              <th>Check-in Time</th>
+              <th>Day</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if checked_in_visitors %}
+              {% for item in checked_in_visitors %}
+                <tr>
+                  <td>{{ item.visit.visitor.id }}</td>
+                  <td>{{ item.visit.visitor.first_name }} {{ item.visit.visitor.last_name }}</td>
+                  <td>{{ item.visit.visitor.company }}</td>
+                  <td>{{ item.visit.purpose }}</td>
+                  <td class="checkin-time-ist">
+                    {% if item.checkin_time_ist %}
+                      {{ item.checkin_time_ist|date:"d/m/Y" }} at {{ item.checkin_time_ist|time:"H:i" }} IST
+                    {% else %}
+                      {{ item.checkin_time|date:"d/m/Y" }} at {{ item.checkin_time|time:"H:i" }}
+                    {% endif %}
+                  </td>
+                  <td>Day {{ item.day_num }}</td>
+                  <td>
+                    <form method="post" action="{% url 'manual_checkout_visitor' %}" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="visit_id" value="{{ item.visit.id }}">
+                      <button type="submit" class="btn btn-warning btn-sm">Manual Check-out</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" style="text-align:center; color:#888;">No visitors currently checked in.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Keep existing functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Listen for all Bootstrap modal close events and reload the page
+    document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.addEventListener('hidden.bs.modal', function() {
+            location.reload();
+        });
+    });
+
+    // Registration user button functionality
+    document.querySelectorAll('.reg-user-info-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var regUser = this.getAttribute('data-reg-user');
+            var modalBody = document.getElementById('regUserModalBody');
+            modalBody.textContent = regUser;
+            var modal = new bootstrap.Modal(document.getElementById('regUserModal'));
+            modal.show();
+        });
+    });
+
+    // Reference info button functionality
+    document.querySelectorAll('.reference-info-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var name = this.getAttribute('data-reference-name') || '-';
+            var dept = this.getAttribute('data-reference-dept') || '-';
+            var purpose = this.getAttribute('data-reference-purpose') || '-';
+            var modalBody = document.getElementById('referenceInfoModalBody');
+            modalBody.innerHTML =
+                '<b>Reference Employee Name:</b> ' + name + '<br>' +
+                '<b>Department:</b> ' + dept + '<br>' +
+                '<b>Purpose:</b> ' + purpose;
+            var modal = new bootstrap.Modal(document.getElementById('referenceInfoModal'));
+            modal.show();
+        });
+    });
+
+    // Other reason button functionality
+    document.querySelectorAll('.other-reason-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var reason = this.getAttribute('data-other-reason');
+            var modalBody = document.getElementById('otherReasonModalBody');
+            modalBody.textContent = reason;
+            var modal = new bootstrap.Modal(document.getElementById('otherReasonModal'));
+            modal.show();
+        });
+    });
+
+    var showCheckedInBtn = document.getElementById('show-checked-in');
+    var checkedInModal = document.getElementById('checkedInModal');
+    if (showCheckedInBtn && checkedInModal) {
+        showCheckedInBtn.addEventListener('click', function() {
+            var modal = new bootstrap.Modal(checkedInModal);
+            modal.show();
+        });
+    }
+});
+</script> 

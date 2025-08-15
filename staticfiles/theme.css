@@ -1,0 +1,553 @@
+/* Godrej Official Color Theme */
+:root {
+  --godrej-black: #000000;
+  --godrej-yellow: #FFC107;
+  --godrej-white: #FFFFFF;
+  --godrej-lightgrey: #F5F5F5;
+}
+
+body,
+body.theme-bg-dark,
+body.theme-form-bg {
+  background: var(--godrej-black) !important;
+  color: var(--godrej-white) !important;
+}
+
+.theme-main-card,
+.theme-card,
+.theme-card-white,
+.theme-form-container,
+.login-card {
+  background: var(--godrej-white) !important;
+  color: var(--godrej-black) !important;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.theme-card-header,
+.theme-section-title,
+.card-title,
+h5.theme-section-title {
+  background: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+
+.theme-navbar,
+.navbar,
+footer {
+  background: var(--godrej-black) !important;
+  color: var(--godrej-white) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.theme-navbar .navbar-brand,
+.theme-navbar .navbar-text,
+.theme-navbar .nav-link,
+.theme-navbar .navbar-toggler-icon {
+  color: var(--godrej-white) !important;
+}
+.theme-navbar .nav-link.active,
+.theme-navbar .nav-link:focus,
+.theme-navbar .nav-link:hover {
+  color: var(--godrej-yellow) !important;
+}
+
+.theme-btn-yellow,
+.theme-form-btn-yellow,
+.btn.theme-btn-yellow,
+.btn.theme-form-btn-yellow {
+  background: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+  border: 2px solid var(--godrej-yellow) !important;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.theme-btn-yellow:hover,
+.theme-btn-yellow:active,
+.theme-form-btn-yellow:hover,
+.theme-form-btn-yellow:active,
+.btn.theme-btn-yellow:hover,
+.btn.theme-btn-yellow:active,
+.btn.theme-form-btn-yellow:hover,
+.btn.theme-form-btn-yellow:active {
+  background: var(--godrej-black) !important;
+  color: var(--godrej-yellow) !important;
+  border: 2px solid var(--godrej-black) !important;
+}
+
+.btn,
+button {
+  border-radius: 0.5rem !important;
+}
+
+.theme-input,
+.theme-form-input,
+.theme-form-select,
+input.theme-form-input,
+select.theme-form-select,
+textarea.theme-form-input {
+  background: var(--godrej-white) !important;
+  color: var(--godrej-black) !important;
+  border: 2px solid var(--godrej-yellow) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.theme-input:focus,
+.theme-form-input:focus,
+.theme-form-select:focus,
+input.theme-form-input:focus,
+select.theme-form-select:focus,
+textarea.theme-form-input:focus {
+  border-color: var(--godrej-black) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255,193,7,0.15) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--godrej-yellow) !important;
+  border-color: var(--godrej-yellow) !important;
+}
+
+.theme-table,
+.table.theme-table {
+  background: var(--godrej-white) !important;
+  color: var(--godrej-black) !important;
+  border-radius: 1rem !important;
+  border: 2px solid var(--godrej-yellow) !important;
+  overflow: hidden;
+}
+.theme-table-header,
+.table.theme-table thead,
+.table.theme-table th {
+  background: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+  font-weight: 700;
+  border: 2px solid var(--godrej-black) !important;
+}
+.theme-table th, .theme-table td {
+  border: 2px solid var(--godrej-black) !important;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+}
+.theme-table tbody tr:nth-child(even) {
+  background: var(--godrej-lightgrey) !important;
+}
+.theme-table tbody tr:nth-child(odd) {
+  background: var(--godrej-white) !important;
+}
+.theme-table tbody tr:hover {
+  background: #FFF8E1 !important;
+}
+
+.alert,
+.alert-info {
+  background: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+  border: 2px solid var(--godrej-black) !important;
+}
+
+.alert-success {
+  background: #28a745 !important; /* Green */
+  color: #fff !important;
+  border: 2px solid #218838 !important;
+}
+
+.alert-danger {
+  background: #dc3545 !important; /* Red */
+  color: #000 !important; /* Black text */
+  border: 2px solid #c82333 !important;
+}
+
+.list-group-item-action:focus, .list-group-item-action:hover {
+  background-color: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+}
+
+::placeholder {
+  color: #888 !important;
+  opacity: 1;
+}
+
+/* Remove all non-Godrej accent buttons */
+.theme-btn-green, .theme-btn-red, .btn-success, .btn-danger, .btn-info, .bg-success, .bg-danger, .bg-info, .badge.bg-success, .badge.bg-info, .badge.bg-danger {
+  background: var(--godrej-yellow) !important;
+  color: var(--godrej-black) !important;
+  border: 2px solid var(--godrej-yellow) !important;
+}
+
+.text-muted {
+  color: #888 !important;
+}
+
+hr, .divider, .border, .border-top, .border-bottom {
+  border-color: var(--godrej-lightgrey) !important;
+}
+
+@media (max-width: 900px) {
+  .theme-main-card, .theme-card-white, .theme-form-container, .login-card {
+    padding: 1.25rem 0.5rem !important;
+    max-width: 98vw;
+  }
+  .theme-card-header, .theme-form-heading {
+    padding: 1rem 1rem 0.5rem 1rem !important;
+    font-size: 1.5rem !important;
+  }
+}
+
+.theme-card-white {
+    background: #fff;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 2rem 2.5rem;
+    margin: 2rem auto;
+    max-width: 700px;
+}
+
+.theme-btn-green {
+    background: #28a745 !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.theme-btn-green:hover, .theme-btn-green:active {
+    background: #218838 !important;
+    color: #fff !important;
+}
+
+.theme-btn-red {
+    background: #dc3545 !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.theme-btn-red:hover, .theme-btn-red:active {
+    background: #c82333 !important;
+    color: #fff !important;
+}
+
+.theme-btn-grey {
+    background: #f8f9fa !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.theme-section-title, .card-title, h5.theme-section-title {
+    background: transparent;
+    color: #000;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    border: none;
+    letter-spacing: 0.01em;
+}
+
+.theme-table {
+    background: #fff;
+    color: #000;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: none;
+}
+.theme-table-header {
+    background: #f8f9fa;
+    color: #000;
+    font-weight: 700;
+    text-align: center;
+    border: none;
+}
+.theme-table th, .theme-table td {
+    border: none !important;
+    text-align: center;
+    vertical-align: middle;
+}
+.theme-table tbody tr:nth-child(even) {
+    background: #f6f6f6 !important;
+}
+.theme-table tbody tr:nth-child(odd) {
+    background: #fff !important;
+}
+.theme-table tbody tr:hover {
+    background: #e9ecef !important;
+}
+
+@media (max-width: 900px) {
+    .theme-card-white {
+        padding: 1.25rem 0.5rem;
+        max-width: 98vw;
+    }
+}
+
+/* Visitor Registration Form Theme Fixes */
+.theme-form-bg {
+    background: #fff !important;
+    min-height: 100vh;
+}
+.theme-form-container {
+    background: #fff;
+    border: 2px solid #ffe066;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 24px rgba(255, 193, 7, 0.08), 0 2px 8px rgba(0,0,0,0.04);
+    padding: 2.5rem 2rem;
+    margin: 2rem auto;
+    max-width: 700px;
+}
+.theme-form-label {
+    color: #000;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.theme-form-heading {
+    color: #000;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    letter-spacing: 0.01em;
+}
+.theme-form-input, .theme-form-select {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem;
+    box-shadow: none;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.theme-form-input:focus, .theme-form-select:focus {
+    border-color: #FFC107 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255,193,7,0.15) !important;
+}
+.theme-form-btn-yellow {
+    background: #FFC107 !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    transition: background 0.2s, color 0.2s;
+}
+.theme-form-btn-yellow:hover, .theme-form-btn-yellow:active {
+    background: #000 !important;
+    color: #FFC107 !important;
+}
+.theme-form-search {
+    background: #fffbe6 !important;
+    border: 2px solid #FFC107 !important;
+    color: #000 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+}
+@media (max-width: 900px) {
+    .theme-form-container {
+        padding: 1.25rem 0.5rem;
+        max-width: 98vw;
+    }
+    .theme-form-heading {
+        font-size: 1.5rem;
+    }
+}
+
+/* --- Visitor Registration Form Strong Theme Overrides --- */
+body.theme-form-bg {
+    background: #fff !important;
+}
+.theme-form-container {
+    background: #fff;
+    border: 2px solid #FFC107 !important;
+    border-radius: 1.25rem !important;
+    box-shadow: 0 4px 24px rgba(255, 193, 7, 0.08), 0 2px 8px rgba(0,0,0,0.04) !important;
+    padding: 2.5rem 2rem !important;
+    margin: 2rem auto !important;
+    max-width: 700px;
+}
+.theme-form-heading {
+    color: #000 !important;
+    font-weight: 800 !important;
+    font-size: 2rem !important;
+    margin-bottom: 2rem !important;
+    letter-spacing: 0.01em;
+}
+.theme-form-label {
+    color: #000 !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+input.theme-form-input,
+select.theme-form-select,
+textarea.theme-form-input {
+    background: #fff !important;
+    color: #000 !important;
+    border: 2px solid #000 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: none !important;
+    margin-bottom: 1.25rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input.theme-form-input:focus,
+select.theme-form-select:focus,
+textarea.theme-form-input:focus {
+    border-color: #FFC107 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255,193,7,0.15) !important;
+}
+button.theme-form-btn-yellow {
+    background: #FFC107 !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 1.5rem !important;
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+    transition: background 0.2s, color 0.2s;
+}
+button.theme-form-btn-yellow:hover,
+button.theme-form-btn-yellow:active {
+    background: #000 !important;
+    color: #FFC107 !important;
+}
+.theme-form-search {
+    background: #fffbe6 !important;
+    border: 2px solid #FFC107 !important;
+    color: #000 !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+hr {
+  border: none;
+  border-top: 2px solid var(--godrej-yellow) !important;
+  background: transparent !important;
+  height: 0;
+  margin: 2rem 0;
+}
+
+.table-responsive {
+  border: 2px solid var(--godrej-yellow) !important;
+  border-radius: 1rem !important;
+  padding: 0;
+  background: var(--godrej-white) !important;
+}
+
+.table-responsive .theme-table,
+.table-responsive .table.theme-table {
+  border: none !important;
+  border-radius: 1rem 1rem 1rem 1rem !important;
+  margin-bottom: 0;
+}
+
+.navbar-brand {
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em;
+}
+
+.theme-section-title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+}
+
+.btn-approve {
+  background: #28a745 !important;
+  color: #fff !important;
+  border: 2px solid #28a745 !important;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.btn-approve:hover, .btn-approve:focus {
+  background: #218838 !important;
+  border-color: #218838 !important;
+  color: #fff !important;
+}
+
+.btn-reject {
+  background: #dc3545 !important;
+  color: #fff !important;
+  border: 2px solid #dc3545 !important;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.btn-reject:hover, .btn-reject:focus {
+  background: #c82333 !important;
+  border-color: #c82333 !important;
+  color: #fff !important;
+}
+
+.btn-dashboard-filter {
+  font-weight: 700;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  min-width: 220px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.btn-dashboard-pending {
+  background: var(--godrej-yellow) !important;
+  color: #000 !important;
+  border: 2px solid var(--godrej-yellow) !important;
+}
+.btn-dashboard-pending:hover, .btn-dashboard-pending:focus {
+  background: #e6b200 !important;
+  color: #fff !important;
+}
+.btn-dashboard-pending.active {
+  background: #ffb300 !important;
+  color: #fff !important;
+  border: 2px solid #ffb300 !important;
+  box-shadow: 0 0 0 2px #ffe082;
+}
+
+.btn-dashboard-approved {
+  background: #28a745 !important;
+  color: #fff !important;
+  border: 2px solid #28a745 !important;
+}
+.btn-dashboard-approved:hover, .btn-dashboard-approved:focus {
+  background: #218838 !important;
+  color: #fff !important;
+}
+.btn-dashboard-approved.active {
+  background: #218838 !important;
+  color: #fff !important;
+  border: 2px solid #218838 !important;
+  box-shadow: 0 0 0 2px #b9f6ca;
+}
+
+.btn-dashboard-rejected {
+  background: #dc3545 !important;
+  color: #fff !important;
+  border: 2px solid #dc3545 !important;
+}
+.btn-dashboard-rejected:hover, .btn-dashboard-rejected:focus {
+  background: #c82333 !important;
+  color: #fff !important;
+}
+.btn-dashboard-rejected.active {
+  background: #c82333 !important;
+  color: #fff !important;
+  border: 2px solid #c82333 !important;
+  box-shadow: 0 0 0 2px #ffcdd2;
+} 

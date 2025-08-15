@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear All Sessions - Confirmation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/theme.css" rel="stylesheet">
+    <style>
+        .theme-card-header { background: #000; color: #FFC107; font-weight: 700; border-radius: 0.5rem 0.5rem 0 0; padding: 1rem 1.5rem; }
+        .theme-btn-yellow { background: #FFC107 !important; color: #000 !important; border: none !important; font-weight: 600; border-radius: 0.5rem; }
+        .theme-btn-yellow:hover, .theme-btn-yellow:active { background: #000 !important; color: #FFC107 !important; }
+        .theme-btn-red { background: #dc3545 !important; color: #fff !important; border: none !important; font-weight: 600; border-radius: 0.5rem; }
+        .theme-btn-red:hover, .theme-btn-red:active { background: #c82333 !important; color: #fff !important; }
+    </style>
+</head>
+<body class="theme-form-bg d-flex align-items-center justify-content-center min-vh-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg rounded-4">
+                    <div class="card-header text-center theme-card-header rounded-3 mb-3">
+                        <h3 class="mb-0">Clear All Sessions</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-warning" role="alert">
+                            <h5 class="alert-heading">⚠️ Warning!</h5>
+                            <p>This action will immediately log out ALL users from the system. This includes:</p>
+                            <ul>
+                                <li>HR users</li>
+                                <li>HOS users</li>
+                                <li>Registration users</li>
+                            </ul>
+                            <p><strong>All users will need to log in again after this action.</strong></p>
+                        </div>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn theme-btn-red flex-fill">Yes, Clear All Sessions</button>
+                                <a href="{% url 'hr-dashboard' %}" class="btn theme-btn-yellow flex-fill">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

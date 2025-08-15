@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Permission Denied</title>
+    <link href="/static/theme.css" rel="stylesheet">
+    <style>
+        body { background: #fff3f3; color: #b71c1c; font-family: Arial, sans-serif; }
+        .container { max-width: 500px; margin: 80px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px #b71c1c22; padding: 2.5rem 2rem; text-align: center; }
+        .icon { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { color: #b71c1c; font-size: 2.2rem; margin-bottom: 0.5rem; }
+        p { color: #b71c1c; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        a { color: #fff; background: #b71c1c; padding: 0.6rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        a:hover { background: #d32f2f; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">&#9940;</div>
+        <h1>Permission Denied</h1>
+        <p>You do not have permission to access this page.<br>
+        Please contact your administrator if you believe this is an error.</p>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,503 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'theme.css' %}" rel="stylesheet">
+    <style>
+        .theme-form-select, select.form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #fff8e1;
+            color: #000;
+            border: 2px solid #FFC107;
+            border-radius: 10px;
+            padding-right: 2.5rem !important;
+            font-weight: 600;
+            min-height: 44px;
+            transition: border-color 0.2s;
+            position: relative;
+        }
+        .theme-form-select:focus, select.form-select:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 0 2px #FFD70044;
+            outline: none;
+        }
+        .theme-form-select:hover, select.form-select:hover {
+            border-color: #FFD700;
+        }
+        .select-arrow-wrapper {
+            position: relative;
+            display: block;
+        }
+        .select-arrow-wrapper select {
+            width: 100%;
+        }
+        .select-arrow-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FFC107;
+            font-size: 1.2em;
+            pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            .theme-form-select, select.form-select {
+                font-size: 0.95rem;
+                min-height: 38px;
+            }
+        }
+    </style>
+</head>
+<body class="theme-form-bg">
+    <div class="container">
+        <div class="theme-form-container">
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 1rem;">
+                <a href="{% url 'registration-logout' %}" class="btn theme-btn-yellow" style="font-weight:600;">Logout</a>
+            </div>
+            <div class="theme-form-heading">Visitor Registration Form</div>
+            <div id="alert-container"></div>
+            <div class="mb-4 position-relative">
+                <label for="visitor-search" class="theme-form-label">Search Existing Visitor</label>
+                <input type="text" class="form-control theme-form-search" id="visitor-search" placeholder="Search by name, phone, email, or ID proof number..." autocomplete="off">
+                <div class="list-group position-absolute w-100" id="visitor-search-results" style="z-index: 1000;"></div>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn theme-form-btn-yellow" type="button" id="view-frequent-modal-btn">
+                    View Frequent Visitors
+                </button>
+            </div>
+            <!-- Frequent Visitors Modal -->
+            <div class="modal fade" id="frequentVisitorsModal" tabindex="-1" aria-labelledby="frequentVisitorsModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="border-radius: 18px;">
+                  <div class="modal-header" style="background: #FFC107; border-radius: 18px 18px 0 0;">
+                    <h5 class="modal-title" id="frequentVisitorsModalLabel" style="color:#000; font-weight:700;">Frequent Visitors</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                    {% if frequent_visitors %}
+                    <div class="table-responsive">
+                      <table class="table theme-table table-sm table-hover align-middle mb-0" style="border-radius: 12px; overflow: hidden;">
+                        <thead class="theme-table-header">
+                          <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Total Visits</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for v in frequent_visitors %}
+                          <tr class="frequent-visitor-row" style="cursor:pointer;" data-visitor-id="{{ v.id }}">
+                            <td>{{ v.first_name }} {{ v.last_name }}</td>
+                            <td>{{ v.phone }}</td>
+                            <td>{{ v.email }}</td>
+                            <td>{{ v.num_visits }}</td>
+                          </tr>
+                          <script id="visitor-{{ v.id }}" type="application/json">
+                            {"first_name": "{{ v.first_name|escapejs }}", "last_name": "{{ v.last_name|escapejs }}", "email": "{{ v.email|escapejs }}", "phone": "{{ v.phone|escapejs }}", "company": "{{ v.company|escapejs }}", "id_proof_type": "{{ v.id_proof_type|escapejs }}", "id_proof_number": "{{ v.id_proof_number|escapejs }}"}
+                          </script>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-0">No frequent visitors found.</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <form id="visitor-form" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="theme-form-label">First Name</label>
+                        <input type="text" class="form-control theme-form-input" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="theme-form-label">Last Name</label>
+                        <input type="text" class="form-control theme-form-input" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="theme-form-label">Email Address</label>
+                    <input type="email" class="form-control theme-form-input" id="email" name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="theme-form-label">Phone Number</label>
+                    <input type="tel" class="form-control theme-form-input" id="phone" name="phone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="company" class="theme-form-label">Organization</label>
+                    <input type="text" class="form-control theme-form-input" id="company" name="company" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_proof_type" class="theme-form-label">ID Proof Type</label>
+                    <span class="select-arrow-wrapper">
+                        <select class="form-select theme-form-select" id="id_proof_type" name="id_proof_type" required>
+                            <option value="" disabled selected>Select ID Proof</option>
+                            <option value="Aadhaar Card">Aadhaar Card</option>
+                            <option value="PAN Card">PAN Card</option>
+                            <option value="Driver's License">Driver's License</option>
+                            <option value="Passport">Passport</option>
+                            <option value="Voter ID">Voter ID</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="mb-3" id="id-proof-number-container" style="display:none;">
+                    <label for="id_proof_number" class="theme-form-label">ID Proof Number</label>
+                    <input type="text" class="form-control theme-form-input" id="id_proof_number" name="id_proof_number" style="background:#fff8e1; color:#000; border:2px solid #FFC107; font-weight:600;" required>
+                    <div id="id-proof-error" style="color:#d32f2f; font-size:0.95rem; margin-top:0.25rem; display:none;"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="purpose" class="theme-form-label">Reason for Visit (Purpose)</label>
+                    <span class="select-arrow-wrapper">
+                        <select class="form-select theme-form-select" id="purpose" name="purpose" required>
+                            <option value="" disabled selected>Select Purpose</option>
+                            <option value="Meeting">Meeting</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Training">Training</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Delivery / Courier">Delivery / Courier</option>
+                            <option value="Inspection">Inspection</option>
+                            <option value="Audit">Audit</option>
+                            <option value="Site Visit">Site Visit</option>
+                            <option value="Vendor Meeting">Vendor Meeting</option>
+                            <option value="Client Visit">Client Visit</option>
+                            <option value="Service / Repair">Service / Repair</option>
+                            <option value="Sales / Marketing">Sales / Marketing</option>
+                            <option value="Project Discussion">Project Discussion</option>
+                            <option value="Safety Training">Safety Training</option>
+                            <option value="Medical / Health Check">Medical / Health Check</option>
+                            <option value="IT Support / Maintenance">IT Support / Maintenance</option>
+                            <option value="Facility Tour">Facility Tour</option>
+                            <option value="Contractor / Labor Entry">Contractor / Labor Entry</option>
+                            <option value="Personal Visit">Personal Visit</option>
+                            <option value="New Joiner Orientation">New Joiner Orientation</option>
+                            <option value="Equipment Installation / Testing">Equipment Installation / Testing</option>
+                            <option value="Other (Specify)">Other (Specify)</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="mb-3" id="other-purpose-container" style="display:none;">
+                    <label for="other_purpose" class="theme-form-label">Please specify</label>
+                    <input type="text" class="form-control theme-form-input" id="other_purpose" name="other_purpose">
+                </div>
+                <div class="mb-3">
+                    <label for="end_time" class="theme-form-label">End Time <span style="color:#d32f2f;">*</span></label>
+                    <input type="time" class="form-control theme-form-input" id="end_time" name="end_time" value="17:30" required>
+                    <div class="form-text">Default is 5:30 PM. You can change if needed.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="valid_upto" class="theme-form-label">Valid Upto (Date) <span style="color:#d32f2f;">*</span></label>
+                    <input type="date" class="form-control theme-form-input" id="valid_upto" name="valid_upto" required>
+                </div>
+                <div class="mb-3">
+                    <span class="form-text">Start Time is set to the current time automatically.</span>
+                </div>
+                <div class="mb-3">
+                    <label class="theme-form-label">Device Permissions</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="allow_mobile" name="allow_mobile">
+                        <label class="form-check-label" for="allow_mobile">
+                            Allow to carry mobile phone
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="allow_laptop" name="allow_laptop">
+                        <label class="form-check-label" for="allow_laptop">
+                            Allow to carry laptop
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="photo" class="theme-form-label">Upload Photo</label>
+                    <input type="file" class="form-control theme-form-input" id="photo" name="photo" accept="image/*">
+                </div>
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" id="reference_by_employee" name="reference_by_employee">
+                    <label class="form-check-label" for="reference_by_employee">
+                        Reference by Employee
+                    </label>
+                </div>
+                <div id="reference-fields" style="display:none;">
+                    <div class="mb-3">
+                        <label for="reference_employee_name" class="theme-form-label">Reference Employee Name</label>
+                        <input type="text" class="form-control theme-form-input" id="reference_employee_name" name="reference_employee_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reference_employee_department" class="theme-form-label">Reference Employee Department</label>
+                        <input type="text" class="form-control theme-form-input" id="reference_employee_department" name="reference_employee_department">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reference_purpose" class="theme-form-label">Purpose behind the reference</label>
+                        <input type="text" class="form-control theme-form-input" id="reference_purpose" name="reference_purpose">
+                    </div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input class="form-check-input" type="checkbox" id="send_to_hr" name="send_to_hr">
+                    <label class="form-check-label" for="send_to_hr">
+                        Send to HR
+                    </label>
+                </div>
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="reset" class="btn btn-reject">Clear</button>
+                    <button type="submit" class="btn btn-approve">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('visitor-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const alertContainer = document.getElementById('alert-container');
+
+            try {
+                const response = await fetch('/api/register_visitor/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: formData,
+                    // We don't set Content-Type header, the browser does it for us with multipart/form-data
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alertContainer.innerHTML = `<div class="alert alert-success" role="alert">
+                        <strong>Success!</strong> ${result.message}
+                    </div>`;
+                    form.reset();
+                } else {
+                    let errorMessage = 'An error occurred. Please try again.';
+                    if (result && typeof result === 'object') {
+                        // Extract and join error messages from the server response
+                        errorMessage = Object.entries(result).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`).join('<br>');
+                    } else if (result) {
+                        errorMessage = result;
+                    }
+                    
+                    alertContainer.innerHTML = `<div class="alert alert-danger" role="alert">
+                        <strong>Error!</strong><br>${errorMessage}
+                    </div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-danger" role="alert">
+                    <strong>Error!</strong> Could not connect to the server. Please check your connection.
+                </div>`;
+                console.error('Fetch error:', error);
+            }
+            alertContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const purposeSelect = document.getElementById('purpose');
+            const otherPurposeContainer = document.getElementById('other-purpose-container');
+            const otherPurposeInput = document.getElementById('other_purpose');
+
+            purposeSelect.addEventListener('change', function() {
+                if (this.value === 'Other (Specify)') {
+                    otherPurposeContainer.style.display = 'block';
+                    otherPurposeInput.required = true;
+                } else {
+                    otherPurposeContainer.style.display = 'none';
+                    otherPurposeInput.required = false;
+                    otherPurposeInput.value = '';
+                }
+            });
+
+            // ID Proof Type logic
+            const idProofType = document.getElementById('id_proof_type');
+            const idProofNumberContainer = document.getElementById('id-proof-number-container');
+            const idProofNumber = document.getElementById('id_proof_number');
+            const idProofError = document.getElementById('id-proof-error');
+            idProofType.addEventListener('change', function() {
+                if (this.value) {
+                    idProofNumberContainer.style.display = 'block';
+                    idProofNumber.required = true;
+                    idProofNumber.value = '';
+                    idProofError.style.display = 'none';
+                } else {
+                    idProofNumberContainer.style.display = 'none';
+                    idProofNumber.required = false;
+                    idProofError.style.display = 'none';
+                }
+            });
+            idProofNumber.addEventListener('input', function() {
+                validateIdProof();
+            });
+            function validateIdProof() {
+                const type = idProofType.value;
+                const val = idProofNumber.value.trim();
+                let valid = true, msg = '';
+                if (type === 'Aadhaar Card') {
+                    valid = /^\d{12}$/.test(val);
+                    msg = 'Aadhaar must be a 12-digit number.';
+                } else if (type === 'PAN Card') {
+                    valid = /^[A-Za-z0-9]{10}$/.test(val);
+                    msg = 'PAN Card must be 10 alphanumeric characters.';
+                } else if (type === "Driver's License") {
+                    valid = /^[A-Za-z0-9]{10,16}$/.test(val);
+                    msg = "Driver's License must be 10–16 alphanumeric characters.";
+                } else if (type === 'Passport') {
+                    valid = /^[A-Za-z0-9]{8}$/.test(val);
+                    msg = 'Passport must be 8 characters.';
+                } else if (type === 'Voter ID') {
+                    valid = /^[A-Za-z0-9]{10,12}$/.test(val);
+                    msg = 'Voter ID must be 10–12 alphanumeric characters.';
+                } else if (type === 'Other') {
+                    valid = val.length > 0;
+                    msg = 'Please enter a value.';
+                }
+                if (!valid) {
+                    idProofError.textContent = msg;
+                    idProofError.style.display = 'block';
+                    idProofNumber.setCustomValidity(msg);
+                } else {
+                    idProofError.style.display = 'none';
+                    idProofNumber.setCustomValidity('');
+                }
+                return valid;
+            }
+            // On form submit, validate again
+            const visitorForm = document.getElementById('visitor-form');
+            visitorForm.addEventListener('submit', function(e) {
+                if (idProofNumberContainer.style.display === 'block' && !validateIdProof()) {
+                    e.preventDefault();
+                    idProofNumber.focus();
+                }
+            });
+
+            // Show Frequent Visitors Modal
+            var frequentBtn = document.getElementById('view-frequent-modal-btn');
+            if (frequentBtn) {
+                frequentBtn.onclick = function() {
+                    var modal = new bootstrap.Modal(document.getElementById('frequentVisitorsModal'));
+                    modal.show();
+                };
+            }
+
+            // Autofill on click in Frequent Visitors modal
+            document.querySelectorAll('.frequent-visitor-row').forEach(function(row) {
+                row.addEventListener('click', function() {
+                    var visitorId = this.getAttribute('data-visitor-id');
+                    var scriptTag = document.getElementById('visitor-' + visitorId);
+                    if (scriptTag) {
+                        var visitor = JSON.parse(scriptTag.textContent);
+                        autofillVisitor(visitor);
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('frequentVisitorsModal'));
+                        if (modal) modal.hide();
+                    }
+                });
+            });
+
+            // Reference by Employee logic
+            const referenceCheckbox = document.getElementById('reference_by_employee');
+            const referenceFields = document.getElementById('reference-fields');
+            referenceCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    referenceFields.style.display = 'block';
+                    document.getElementById('reference_employee_name').required = true;
+                    document.getElementById('reference_employee_department').required = true;
+                    document.getElementById('reference_purpose').required = true;
+                } else {
+                    referenceFields.style.display = 'none';
+                    document.getElementById('reference_employee_name').required = false;
+                    document.getElementById('reference_employee_department').required = false;
+                    document.getElementById('reference_purpose').required = false;
+                    document.getElementById('reference_employee_name').value = '';
+                    document.getElementById('reference_employee_department').value = '';
+                    document.getElementById('reference_purpose').value = '';
+                }
+            });
+        });
+
+        const searchInput = document.getElementById('visitor-search');
+        const resultsBox = document.getElementById('visitor-search-results');
+        let searchTimeout = null;
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(searchTimeout);
+            if (query.length < 2) {
+                resultsBox.innerHTML = '';
+                resultsBox.style.display = 'none';
+                return;
+            }
+            searchTimeout = setTimeout(() => {
+                fetch(`/api/search_visitors/?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resultsBox.innerHTML = '';
+                        if (data.results.length > 0) {
+                            data.results.forEach(visitor => {
+                                const item = document.createElement('button');
+                                item.type = 'button';
+                                item.className = 'list-group-item list-group-item-action';
+                                item.textContent = `${visitor.first_name} ${visitor.last_name} | ${visitor.email} | ${visitor.phone}`;
+                                item.onclick = () => autofillVisitor(visitor);
+                                resultsBox.appendChild(item);
+                            });
+                            resultsBox.style.display = 'block';
+                        } else {
+                            resultsBox.style.display = 'none';
+                        }
+                    });
+            }, 300);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
+                resultsBox.style.display = 'none';
+            }
+        });
+
+        function autofillVisitor(visitor) {
+            document.getElementById('first_name').value = visitor.first_name || '';
+            document.getElementById('last_name').value = visitor.last_name || '';
+            document.getElementById('email').value = visitor.email || '';
+            document.getElementById('phone').value = visitor.phone || '';
+            document.getElementById('company').value = visitor.company || '';
+            document.getElementById('id_proof_type').value = visitor.id_proof_type || '';
+            document.getElementById('id_proof_number').value = visitor.id_proof_number || '';
+            // Clear the search input after autofill
+            document.getElementById('visitor-search').value = '';
+            resultsBox.innerHTML = '';
+            resultsBox.style.display = 'none';
+            document.getElementById('first_name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Trigger change event to show/hide ID Proof Number field correctly
+            document.getElementById('id_proof_type').dispatchEvent(new Event('change'));
+        }
+    </script>
+</body>
+</html> 

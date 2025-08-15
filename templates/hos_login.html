@@ -1,0 +1,13 @@
+{% extends 'login.html' %}
+{% block title %}HOS Login Portal{% endblock %}
+
+{% block portal_header_style %}style="background:#FFC107; color:#000; border: 2.5px solid #000;"{% endblock %}
+{% block portal_title %}HOS Portal Login{% endblock %}
+
+{% block portal_login_button %}
+<div class="login-title" style="background:#FFC107; color:#000; font-weight:700; font-size:1.5rem; text-align:center; border-radius:8px; padding:10px 0; margin-bottom:20px;">HOS Portal Login</div>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+{% endblock %} 

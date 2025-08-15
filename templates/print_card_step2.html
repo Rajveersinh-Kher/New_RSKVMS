@@ -1,0 +1,329 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Safety Passport – Godrej Industries Ltd, Valia</title>
+    <style>
+        body {
+            background: #fffbe6;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .theme-header {
+            width: 100%;
+            background: #111;
+            color: #ffe066;
+            padding: 1.2em 0 1em 0;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.2em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .theme-btn {
+            background: #ffe066;
+            color: #111;
+            border: 2px solid #111;
+            border-radius: 0.4em;
+            font-size: 1.1em;
+            font-weight: 600;
+            padding: 0.5em 1.5em;
+            margin: 0 0.5em 0.7em 0;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .theme-btn:hover {
+            background: #111;
+            color: #ffe066;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .theme-btn:active {
+            background: #ffe066;
+            color: #111;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+        }
+        .print-card-checkbox {
+            accent-color: #ffe066;
+            border: 2px solid #111;
+            width: 1.2em;
+            height: 1.2em;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        .print-card-checkbox:hover {
+            box-shadow: 0 0 0 2px #ffe066;
+        }
+        .print-card-wrapper {
+            background: #fff;
+            border-radius: 0.5em;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 1.5em;
+            transition: box-shadow 0.2s, border 0.2s;
+        }
+        .print-card-wrapper:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+            border: 2.5px solid #ffe066 !important;
+        }
+        .a5-card {
+            width: 21cm;
+            height: 14.8cm;
+            margin: 0 auto;
+            display: flex;
+            border: 2px solid #000;l
+            background: #e6f4e0;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+        .pane {
+            width: 50%;
+            height: 100%;
+            box-sizing: border-box;
+            border-right: 2px solid #000;
+            padding: 1.2cm 1cm 1cm 1.2cm;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .pane:last-child {
+            border-right: none;
+            padding-left: 1cm;
+            padding-right: 1.2cm;
+        }
+        .logo {
+            width: 3.5cm;
+            height: auto;
+            margin-bottom: 0.3cm;
+            margin-left: 0;
+            margin-top: 0;
+            display: block;
+        }
+        .title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.5em;
+            text-align: center;
+            background: #ffe066;
+            border-radius: 6px;
+            padding: 0.2em 0;
+            border: 1px solid #000;
+        }
+        .section {
+            margin-bottom: 0.7em;
+        }
+        .label {
+            font-weight: bold;
+            color: #000;
+            display: inline-block;
+            min-width: 4.5cm;
+        }
+        .value {
+            color: #000;
+            font-weight: normal;
+        }
+        .photo-box, .qr-box {
+            width: 3.2cm;
+            height: 3.8cm;
+            border: 1.5px solid #000;
+            background: transparent;
+            display: inline-block;
+            margin-right: 0.5cm;
+            vertical-align: top;
+            text-align: center;
+            line-height: 3.8cm;
+            font-size: 0.9em;
+            color: #888;
+        }
+        .qr-box {
+            margin-right: 0;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5em;
+        }
+        .note-warning {
+            color: #000;
+            background: #ffe066;
+            border: 1px solid #000;
+            border-radius: 4px;
+            padding: 0.2em 0.5em;
+            font-size: 0.95em;
+            margin-top: 0.3em;
+            margin-bottom: 0.7em;
+            text-align: center;
+        }
+        .emergency {
+            font-size: 0.98em;
+            margin-bottom: 0.5em;
+        }
+        .note, .welcome, .exit {
+            font-size: 0.97em;
+            margin-bottom: 0.5em;
+        }
+        .hindi {
+            font-size: 0.95em;
+            margin-bottom: 0.5em;
+        }
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.2em;
+        }
+        .sign-box {
+            width: 45%;
+            border-top: 1.5px solid #000;
+            text-align: center;
+            padding-top: 0.2em;
+            font-size: 0.95em;
+            color: #000;
+        }
+        @media print {
+            body, html {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .a5-card {
+                margin: 0;
+                box-shadow: none;
+            }
+            #printSelectedBtn, #printAllBtn, #cancelBtn, .print-card-checkbox, .dashboard-header, .theme-header, form#printCardsForm > div[style*='text-align:center'] {
+                display: none !important;
+            }
+            body {
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="theme-header">Print Visitor Cards</div>
+{% if generated_cards %}
+    <div style="width:100%;text-align:center;margin-bottom:1em;">
+        <button id="printSelectedBtn" class="theme-btn">Print Selected</button>
+        <button id="printAllBtn" class="theme-btn">Print All</button>
+        <button id="cancelBtn" class="theme-btn">Cancel</button>
+    </div>
+    <form id="printCardsForm">
+        {% csrf_token %}
+    {% for card_data in generated_cards %}
+    <div class="print-card-wrapper" style="position:relative;">
+        <input type="checkbox" class="print-card-checkbox" style="position:absolute;top:0.3em;left:0.3em;z-index:20;transform:scale(1.3);" value="{{ forloop.counter0 }}" data-card-id="{{ card_data.card.id }}">
+        <div style="width:14.7cm;height:9.7cm;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;page-break-after:always;box-sizing:border-box;position:relative;">
+            <div style="position:absolute;top: 0.01cm;left: 54%; transform: translateX(-46%);z-index:10;">
+                <img src="{% static 'img/godrej_logo.png' %}" alt="Godrej Logo" style="width:2cm;height:auto; display: block;">
+            </div>        
+            <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
+                <!-- Left Rectangle -->
+                <div style="width:6.2cm;height:8.8cm;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;margin-left:0.2cm;margin-right:1.5cm;position:relative;">
+                    <div style="position:relative;width:100%;height:100%;">
+                        <div style="font-size:0.75em;margin-bottom:0.09cm;text-align:justify;line-height:1.15;">Welcome! Please help us for your own cyber safety by following our Protocol. Wish you a very pleasant, rewarding and a safe visit.</div>
+                        <div style="font-size:0.70em;margin-bottom:0.09cm;text-align:justify;line-height:1.15;">Emergency Contact Numbers:<br>Fire Pump House: 307 / 444<br>Security Main Gate: 504 / 501<br>Occupational Health Center: 555<br>Security Comen User: 7227046007</div>
+                        <div style="font-size:0.75em;margin-bottom:0.09cm;text-align:justify;line-height:1.15;">I have read the cyber safety guidelines and understand that failure to comply with the following guidelines could result in financial losses.</div>
+                        <div style="font-size:0.65em;margin-bottom:0.09cm;text-align:justify;line-height:1.15;">मैंने लिखित साइबर दिशा-निर्देश पढ़ी और समझी है, और मैं यह जानता हूँ कि इन गाइडलाइनों का अगर मैं उल्लंघन करता हूँ तो मेरा आर्थिक नुकसान हो सकता है।</div>
+                        <div style="font-size:0.75em;margin-bottom:0.09cm;text-align:justify;line-height:1.15;">Exit Instruction: While going out, please scan the QR code from the QR code matrix which is present at the gate.</div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:0.7em;">
+                        <div style="width:45%;border-top:1.5px solid #000;text-align:center;padding-top:0.15em;font-size:0.70em;color:#000;">Employee Sign</div>
+                        <div style="width:45%;border-top:1.5px solid #000;text-align:center;padding-top:0.15em;font-size:0.70em;color:#000;">Visitor Sign</div>
+                    </div>
+                </div>
+                <!-- Right Rectangle -->
+                <div style="width:6.2cm;height:8.8cm;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;padding:0.3cm 0.3cm 0.7cm 0.3cm;">
+                    <div style="font-size:1em;font-weight:bold;color:#000;margin-bottom:0.2cm;text-align:left;">Safety Passport – Godrej Industries Ltd, Valia</div>
+                    <div style="display:flex;align-items:flex-start;margin-bottom:0.2cm;">
+                        <div style="width:2cm;height:2.7cm;border:1.5px solid #000;background:transparent;display:inline-block;vertical-align:top;text-align:center;line-height:2.7cm;font-size:0.9em;color:#888;overflow:hidden;">
+                            {% if card_data.visitor.photo %}
+                                <img src="/media/{{ card_data.visitor.photo }}" alt="Photo" style="max-width:100%; max-height:100%; vertical-align:middle;" />
+                            {% else %}Photo{% endif %}
+                        </div>
+                        <div style="width:2.2cm;height:2.8cm;border:1.5px solid #000;background:transparent;display:inline-block;vertical-align:top;text-align:center;line-height:2.8cm;font-size:0.9em;color:#888;margin-left:0.4cm;overflow:hidden;">
+                            {% if card_data.card.qr_code_url %}
+                                <img src="{{ card_data.card.qr_code_url }}" alt="QR Code" style="max-width:100%; max-height:100%; vertical-align:middle; background:transparent;" />
+                            {% else %}QR Code{% endif %}
+                        </div>
+                    </div>
+                    <div style="font-size:0.95em;margin-bottom:0.15cm;"><b>VC:</b> {{ card_data.card.card_number }}</div>
+                    <div style="font-size:0.95em;margin-bottom:0.15cm;"><b>NM:</b> {{ card_data.visitor.first_name }} {{ card_data.visitor.last_name }}</div>
+                    <div style="font-size:0.95em;margin-bottom:0.15cm;"><b>ORG:</b> {{ card_data.visitor.company }}</div>
+                    <div style="font-size:0.95em;margin-bottom:0.15cm;"><b>Date Issued:</b> {{ card_data.card.issued_at|date:"d/m/Y" }}</div>
+                    <div style="font-size:0.95em;margin-bottom:0.15cm;"><b>Valid Upto:</b> {{ card_data.visit_request.valid_upto|date:"d/m/Y" }}</div>
+                    <div style="font-size:0.85em;color:#000;font-weight:bold;margin-top:0.2em;margin-bottom:0.5em;text-align:left;white-space:nowrap;margin-left:-0.2cm;">&#9888; Please check out before {{ card_data.visit_request.end_time|time:"H:i" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="page-break-after: always;"></div>
+    {% endfor %}
+    </form>
+    <script>
+    // Print Selected
+    document.getElementById('printSelectedBtn').onclick = function() {
+        const checkboxes = document.querySelectorAll('.print-card-checkbox:checked');
+        if (checkboxes.length === 0) { alert('Please select at least one card to print.'); return; }
+        document.querySelectorAll('.print-card-wrapper').forEach((wrapper, idx) => {
+            wrapper.style.display = 'none';
+        });
+        checkboxes.forEach(cb => {
+            document.querySelectorAll('.print-card-wrapper')[cb.value].style.display = 'block';
+        });
+        setTimeout(() => {
+            window.print();
+            // Mark printed in backend and remove from DOM
+            const printedIds = Array.from(checkboxes).map(cb => cb.getAttribute('data-card-id'));
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+            fetch('/print-card/mark-printed/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ card_ids: printedIds })
+            }).then(() => {
+                window.location.href = "{% url 'print_card_dashboard' %}";
+            });
+        }, 50);
+    };
+    // Print All
+    document.getElementById('printAllBtn').onclick = function() {
+        setTimeout(() => {
+            window.print();
+            // Mark all as printed in backend and remove from DOM
+            const allCheckboxes = document.querySelectorAll('.print-card-checkbox');
+            const allIds = Array.from(allCheckboxes).map(cb => cb.getAttribute('data-card-id'));
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+            fetch('/print-card/mark-printed/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ card_ids: allIds })
+            }).then(() => {
+                window.location.href = "{% url 'print_card_dashboard' %}";
+            });
+        }, 50);
+    };
+    // Cancel
+    document.getElementById('cancelBtn').onclick = function() {
+        // Clear session data before redirecting
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+        fetch('/print-card/clear-session/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        }).then(() => {
+            window.location.href = "{% url 'print_card_dashboard' %}";
+        }).catch(() => {
+            // If the endpoint doesn't exist, just redirect anyway
+            window.location.href = "{% url 'print_card_dashboard' %}";
+        });
+    };
+    </script>
+{% else %}
+    <div class="container py-4"><div class="text-center text-muted">No cards were generated.</div></div>
+{% endif %}
+</body>
+</html> 
