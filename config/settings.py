@@ -110,11 +110,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/var/sqlite/auth.db',  # persistent storage
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'NewRSKVMSdb',
+        'USER': 'postgres',
+        'PASSWORD': 'RA101728vu',
+        'HOST': 'localhost',
+        'PORT': '5432', 
     }
 }
+
 
 
 # Password validation
