@@ -113,7 +113,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('Dpostgresql://newrskvmsdb_user:8oAYHcZW7pQQnfCC0YEUHsU7Vy2tJw9e@dpg-d2fkspqdbo4c73bd2pcg-a.singapore-postgres.render.com/newrskvmsdb'),
+        default=os.environ.get('postgresql://newrskvmsdb_user:8oAYHcZW7pQQnfCC0YEUHsU7Vy2tJw9e@dpg-d2fkspqdbo4c73bd2pcg-a.singapore-postgres.render.com/newrskvmsdb'),
         conn_max_age=600,
         ssl_require=True
     )
