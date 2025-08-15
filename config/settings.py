@@ -53,7 +53,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     '0.0.0.0',
-    'rskvms.onrender.com',
+    'new-rskvms.onrender.com',
     'rskvms.shop',
     'www.rskvms.shop',
 ]
@@ -240,5 +240,5 @@ CSRF_TRUSTED_ORIGINS = [
     'https://127.0.0.1',
     'https://rskvms.shop',
     'https://www.rskvms.shop',
-    'https://rskvms.onrender.com',
+    'https://new-rskvms.onrender.com',
 ]
