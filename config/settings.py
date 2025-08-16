@@ -128,6 +128,12 @@ DATABASES = {
 #         'PORT': '5432',
 #     }
 # }
+# MongoDB settings (used by VisitorapiConfig)
+MONGODB_SETTINGS = {
+    "db": os.environ.get("MONGODB_DB_NAME", "rsk_vms"),
+    "host": os.environ.get("MONGODB_URI"),
+    "alias": "default"
+}
 
 
 
