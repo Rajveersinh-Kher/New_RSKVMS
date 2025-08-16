@@ -7,7 +7,11 @@ class VisitorapiConfig(AppConfig):
     name = 'visitorapi'
 
     def ready(self):
-        connect(
-            host=os.environ.get("MONGODB_URI"),
-            db=os.environ.get("MONGODB_DB_NAME")
-        )
+        try:
+            conn = connect(
+                host=os.environ.get("MONGODB_URI"),
+                db=os.environ.get("MONGODB_DB_NAME")
+            )
+            print("✅ MongoDB connected:", conn)
+        except Exception as e:
+            print("❌ MongoDB connection failed:", e)
