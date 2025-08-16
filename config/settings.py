@@ -21,8 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # MongoDB Configuration
-MONGODB_URI = os.environ.get('MONGODB_URI')
-MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'rsk_vms')
+#MONGODB_URI = os.environ.get('MONGODB_URI')
+#MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'rsk_vms')
 
 # Initialize MongoDB connection
 #if MONGODB_URI:
@@ -42,11 +42,11 @@ MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'rsk_vms')
 # SECURITY WARNING: keep the secret key used in production secret!
 # For local development, a fallback key is used. Always override via ENV in production.
 # Generate a new secret key: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "^8iow3f9anh14s@bg%64@a!#@#*g-_rw1ay(oooxc7+awxf8z6"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG can be toggled via environment variable. Defaults to True for local/dev.
-DEBUG = os.environ.get('DEBUG', 'True').strip().lower() in {'1', 'true', 'yes', 'on'}
+DEBUG = False #os.environ.get('DEBUG', 'True').strip().lower() in {'1', 'true', 'yes', 'on'}
 
 # Update this list with your actual production domain(s)
 ALLOWED_HOSTS = [
@@ -118,7 +118,16 @@ DATABASES = {
         ssl_require=True
     )
 }
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'NewRSKVMSdb',
+#         'USER': 'postgres',
+#         'PASSWORD': 'RA101728vu',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 
@@ -201,9 +210,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Security settings
 # In development (DEBUG=True), keep these relaxed. In production, set env vars or DEBUG=False.
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
-CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
+SECURE_SSL_REDIRECT = False #os.environ.get('SECURE_SSL_REDIRECT', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
+SESSION_COOKIE_SECURE = False #os.environ.get('SESSION_COOKIE_SECURE', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
+CSRF_COOKIE_SECURE = False #os.environ.get('CSRF_COOKIE_SECURE', str(not DEBUG)).strip().lower() in {'1', 'true', 'yes', 'on'}
 
 # Enable HTTP Strict Transport Security (HSTS)
 SECURE_HSTS_SECONDS = 31536000  # 1 year
